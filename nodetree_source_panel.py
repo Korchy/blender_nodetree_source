@@ -16,7 +16,11 @@ class NODETREE_SOURCE_PT_panel_3d_view(Panel):
     bl_category = 'nodetree_source'
 
     def draw(self, context):
-        self.layout.operator('nodetree_source.to_source', icon='NODETREE')
+        layout = self.layout
+        layout.operator('nodetree_source.to_source', icon='NODETREE')
+        layout.label(text='Export to')
+        row = layout.row()
+        row.prop(data=context.preferences.addons[__package__].preferences, property='dest_type', expand=True)
 
 
 class NODETREE_SOURCE_PT_panel_shader_editor(Panel):
@@ -27,7 +31,11 @@ class NODETREE_SOURCE_PT_panel_shader_editor(Panel):
     bl_category = 'nodetree_source'
 
     def draw(self, context):
-        self.layout.operator('nodetree_source.to_source', icon='NODETREE')
+        layout = self.layout
+        layout.operator('nodetree_source.to_source', icon='NODETREE')
+        layout.label(text='Export to')
+        row = layout.row()
+        row.prop(data=context.preferences.addons[__package__].preferences, property='dest_type', expand=True)
 
 
 def register():

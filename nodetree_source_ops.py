@@ -4,6 +4,7 @@
 # GitHub
 #   https://github.com/Korchy/blender_nodetree_source
 
+import bpy
 from bpy.types import Operator
 from bpy.utils import register_class, unregister_class
 from .nodetree_source import NodeTreeSource
@@ -18,7 +19,8 @@ class NODETREE_SOURCE_OT_to_source(Operator):
 
     def execute(self, context):
         NodeTreeSource.to_source(
-            context=context
+            context=context,
+            scene_data=bpy.data
         )
         return {'FINISHED'}
 
