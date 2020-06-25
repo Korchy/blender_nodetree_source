@@ -17,14 +17,14 @@ class NodeTreeSource:
             if context.preferences.addons[__package__].preferences.dest_type == 'Text':
                 # show in TEXT_EDITOR window
                 cls._to_text(
-                    source_name=Material.active_material(context=context).name,
+                    source_name=Material.active_material_object(context=context).name,
                     source=source,
                     context=context,
                     scene_data=scene_data
                 )
             elif context.preferences.addons[__package__].preferences.dest_type == 'File':
                 cls._to_file(
-                    source_name=Material.active_material(context=context).name,
+                    source_name=Material.active_material_object(context=context).name,
                     source=source,
                     dest_file=''
                 )

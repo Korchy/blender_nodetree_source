@@ -4,19 +4,25 @@
 # GitHub
 #   https://github.com/Korchy/blender_nodetree_source
 
+from .nodetree_source_node_tree import NodeTree
+
 
 class Material:
 
-    @staticmethod
-    def to_source(context):
+    @classmethod
+    def to_source(cls, context):
         # convert active material to source
-        source = 'x'
-
+        source = ''
+        active_material_object = cls.active_material_object(context=context)
+        if active_material_object:
+            source = NodeTree.to_source(
+                node_tree=active_material_object.node_tree
+            ) + '\n'
         return source
 
     @classmethod
-    def active_material(cls, context):
-        # get active material (material object)
+    def active_material_object(cls, context):
+        # get active material object
         material_object = None
         if cls.get_subtype(context=context) == 'ShaderNodeTree'\
                 and cls.get_subtype2(context=context) == 'OBJECT':

@@ -13,7 +13,7 @@ class NODETREE_SOURCE_PT_panel_3d_view(Panel):
     bl_label = 'NodeTree Source'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'nodetree_source'
+    bl_category = 'NodeTree Source'
 
     def draw(self, context):
         layout = self.layout
@@ -28,7 +28,7 @@ class NODETREE_SOURCE_PT_panel_shader_editor(Panel):
     bl_label = 'NodeTree Source'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_category = 'nodetree_source'
+    bl_category = 'NodeTree Source'
 
     def draw(self, context):
         layout = self.layout
