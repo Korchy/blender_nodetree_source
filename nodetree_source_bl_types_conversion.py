@@ -22,6 +22,13 @@ class BLVector:
         return str(tuple(value))
 
 
+class BLbpy_prop_array:
+
+    @classmethod
+    def to_str(cls, value):
+        return str(tuple(value))
+
+
 class BLCurveMapping:
 
     @classmethod

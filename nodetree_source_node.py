@@ -5,7 +5,9 @@
 #   https://github.com/Korchy/blender_nodetree_source
 
 from mathutils import Vector, Color
+from bpy.types import bpy_prop_array
 from .nodetree_source_bl_types_conversion import *
+
 
 class Node:
 
@@ -18,17 +20,15 @@ class Node:
         # inputs
         if node.inputs:
             source += '# NODE INPUTS' + '\n'
-            for i, c_input in enumerate(node.inputs):
+            for index, c_input in enumerate(node.inputs):
                 if hasattr(c_input, 'default_value'):
-                    # source += c_input.rna_type.identifier + '\n'  # NodeSocketInterfaceXXX
-                    print(node.name, c_input.name, type(c_input.default_value))
-                    source += node_alias + '.inputs[' + str(i) + '].default_value = ' + c_input.default_value
+                    source += node_alias + '.inputs[' + str(index) + '].default_value = ' + cls._value_by_type(value=c_input.default_value) + '\n'
         # outputs
         if node.outputs:
             source += '# NODE OUTPUTS' + '\n'
-            for c_output in node.outputs:
+            for index, c_output in enumerate(node.outputs):
                 if hasattr(c_output, 'default_value'):
-                    source += c_output.rna_type.identifier + '\n'  # NodeSocketInterfaceXXX
+                    source += node_alias + '.outputs[' + str(index) + '].default_value = ' + cls._value_by_type(value=c_output.default_value) + '\n'
         # attributes
         excluded_attributes = [
             'dimensions', 'height', 'hide', 'inputs', 'internal_links', 'name', 'outputs', 'parent', 'rna_type', 'select',
@@ -64,3 +64,14 @@ class Node:
     def node_alias(node):
         # get text node alias-name
         return node.name.replace(' ', '_').replace('.', '_').lower()
+
+    @staticmethod
+    def _value_by_type(value):
+        # value as string by type
+        if isinstance(value, bpy_prop_array):
+            return BLbpy_prop_array.to_str(value=value)
+        elif isinstance(value, (int, float, bool, set, str)):
+            return str(value)
+        else:
+            print('ERR: Undefined type value', value, type(value))
+            return None
