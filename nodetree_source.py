@@ -12,19 +12,20 @@ class NodeTreeSource:
     @classmethod
     def to_source(cls, context, scene_data):
         # convert active material to source
-        source = Material.to_source(context=context)
+        source = 'import bpy' + '\n\n'
+        source += Material.to_source(context=context, scene_data=scene_data)
         if source:
             if context.preferences.addons[__package__].preferences.dest_type == 'Text':
                 # show in TEXT_EDITOR window
                 cls._to_text(
-                    source_name=Material.active_material_object(context=context).name,
+                    source_name=Material.active_material_object(context=context)[0].name,
                     source=source,
                     context=context,
                     scene_data=scene_data
                 )
             elif context.preferences.addons[__package__].preferences.dest_type == 'File':
                 cls._to_file(
-                    source_name=Material.active_material_object(context=context).name,
+                    source_name=Material.active_material_object(context=context)[0].name,
                     source=source,
                     dest_file=''
                 )
@@ -45,6 +46,7 @@ class NodeTreeSource:
         if not text_block:
             text_block = scene_data.texts.new(name=source_name)
         text_block.from_string(string=source)
+        text_block.select_set(line_start=0, char_start=0, line_end=0, char_end=0)
         text_block.current_line_index = 0
         # show text object in window
         show_in_area = None

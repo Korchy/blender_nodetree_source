@@ -10,14 +10,37 @@ from .nodetree_source_node_tree import NodeTree
 class Material:
 
     @classmethod
-    def to_source(cls, context):
+    def to_source(cls, context, scene_data):
         # convert active material to source
-        source = ''
-        active_material_object = cls.active_material_object(context=context)
+        source = '# MATERIAL' + '\n'
+        active_material_object, material_type = cls.active_material_object(context=context)
         if active_material_object:
-            source = NodeTree.to_source(
-                node_tree=active_material_object.node_tree
+            source += cls._create_new_source(
+                context=context,
+                material_type=material_type,
+                material_name=cls.material_alias(material=active_material_object)
             ) + '\n'
+            source += NodeTree.to_source(
+                node_tree=active_material_object.node_tree
+            )
+        return source
+
+    @staticmethod
+    def _create_new_source(context, material_type, material_name):
+        # create new material by type - source
+        source = ''
+        if material_type == 'OBJECT':
+            source = material_name + ' = bpy.data.materials.new(name=\'' + material_name + '\')' + '\n'
+            source += material_name + '.use_nodes = True' + '\n'
+            source += 'node_tree = ' + material_name + '.node_tree' + '\n'
+        elif material_type == 'WORLD':
+            source = material_name + ' = bpy.data.worlds.new(name=\'' + material_name + '\')' + '\n'
+            source += material_name + '.use_nodes = True' + '\n'
+            source += 'node_tree = ' + material_name + '.node_tree' + '\n'
+        elif material_type == 'CONPOSITING':
+            source = 'node_tree = bpy.context.scene.node_tree' + '\n'
+            source += 'bpy.context.scene.use_nodes = True' + '\n'
+        source += NodeTree.clear_source()
         return source
 
     @classmethod
@@ -26,12 +49,12 @@ class Material:
         material_object = None
         if cls.get_subtype(context=context) == 'ShaderNodeTree'\
                 and cls.get_subtype2(context=context) == 'OBJECT':
-            material_object = context.active_object.active_material
+            material_object = (context.active_object.active_material, cls.get_subtype2(context=context))
         elif cls.get_subtype(context=context) == 'ShaderNodeTree'\
                 and cls.get_subtype2(context=context) == 'WORLD':
-            material_object = context.scene.world
+            material_object = (context.scene.world, cls.get_subtype2(context=context))
         elif cls.get_subtype(context=context) == 'CompositorNodeTree':
-            material_object = context.scene
+            material_object = (context.scene, 'CONPOSITING')
         return material_object
 
     @staticmethod
@@ -49,3 +72,8 @@ class Material:
             return context.space_data.shader_type
         else:
             return 'OBJECT'
+
+    @staticmethod
+    def material_alias(material):
+        # get text material alias-name
+        return material.name.replace(' ', '_').replace('.', '_').lower()

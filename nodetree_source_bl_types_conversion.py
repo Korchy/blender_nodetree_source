@@ -11,22 +11,29 @@
 class BLColor:
 
     @classmethod
-    def to_str(cls, value):
+    def to_source(cls, value):
         return str(tuple(value))
 
 
 class BLVector:
 
     @classmethod
-    def to_str(cls, value):
+    def to_source(cls, value):
         return str(tuple(value))
 
 
 class BLbpy_prop_array:
 
     @classmethod
-    def to_str(cls, value):
+    def to_source(cls, value):
         return str(tuple(value))
+
+
+class BLScene:
+
+    @classmethod
+    def to_source(cls, value):
+        return 'bpy.data.scenes.get(\'' + value.name + '\')'
 
 
 class BLCurveMapping:

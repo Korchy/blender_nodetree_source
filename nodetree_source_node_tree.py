@@ -4,12 +4,6 @@
 # GitHub
 #   https://github.com/Korchy/blender_nodetree_source
 
-# import sys
-# from .file_manager import FileManager
-# from .node_io import *
-# from .node_common import NodeCommon
-# from .node_shader_cycles import *
-# from .node_compositor import *
 from .nodetree_source_node import Node
 
 
@@ -44,6 +38,13 @@ class NodeTree:
                           + from_node_alias + '.outputs[' + str(list(link.from_node.outputs).index(link.from_socket)) + ']' + \
                           ', ' + to_node_alias + '.inputs[' + str(list(link.to_node.inputs).index(link.to_socket)) + ']' + \
                           ')' + '\n'
+        return source
+
+    @staticmethod
+    def clear_source():
+        # source for clear node tree
+        source = 'for node in node_tree.nodes:' + '\n'
+        source += '    node_tree.nodes.remove(node)' + '\n'
         return source
 
     # @staticmethod
