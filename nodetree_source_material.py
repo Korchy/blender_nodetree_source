@@ -76,4 +76,7 @@ class Material:
     @staticmethod
     def material_alias(material):
         # get text material alias-name
-        return material.name.replace(' ', '_').replace('.', '_').lower()
+        material_name = material.name.lower()
+        for ch in (' ', '.', '/'):
+            material_name = material_name.replace(ch, '_')
+        return material_name

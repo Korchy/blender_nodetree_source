@@ -32,38 +32,68 @@ class Node:
                     if output_value_str is not None:
                         source += node_alias + '.outputs[' + str(index) + '].default_value = ' + output_value_str + '\n'
         # attributes
+        # don't process
         excluded_attributes = [
             'dimensions', 'height', 'hide', 'inputs', 'internal_links', 'name', 'outputs', 'parent', 'rna_type', 'select',
             'shading_compatibility', 'show_options', 'show_preview', 'show_texture', 'type', 'width_hidden'
         ]
+        # process first - because they influence on other attributes
+        preordered_attributes = [attr for attr in ['mode'] if hasattr(node, attr)]
+        # complex attributes - can be readonly but must be processed inside themselves
+        complex_attributes = ['mapping']
+        # all other attributes
         attributes = [
             attr for attr in dir(node) if
             not attr.startswith('__')
             and (not attr.startswith('bl_') or attr == 'bl_idname')
             and attr not in excluded_attributes
+            and attr not in preordered_attributes
             and hasattr(node, attr)
             and not callable(getattr(node, attr))
-            and not node.is_property_readonly(attr)
+            and (not node.is_property_readonly(attr) or attr in complex_attributes)
         ]
+        # first - preordered attributes
+        for attribute in preordered_attributes:
+            # convert by types
+            source += cls._attribute_source(
+                node=node,
+                node_alias=node_alias,
+                attribute=attribute
+            )
+        # next - other attributes
         if attributes:
             for attribute in attributes:
                 # convert by types
-                # don't save empty strings
-                if isinstance(getattr(node, attribute), str) and not getattr(node, attribute):
-                    continue
-                # don't save None attributes
-                if getattr(node, attribute) is None:
-                    continue
-                # get string alias of an attribute
-                attribute_value_str = cls._value_by_type(item=attribute, value=getattr(node, attribute))
-                if attribute_value_str is not None:
-                    source += node_alias + '.' + attribute + ' = ' + attribute_value_str + '\n'
+                source += cls._attribute_source(
+                    node=node,
+                    node_alias=node_alias,
+                    attribute=attribute
+                )
+        return source
+
+    @classmethod
+    def _attribute_source(cls, node, node_alias, attribute):
+        # attribute as string
+        source = ''
+        # don't save empty strings
+        if isinstance(getattr(node, attribute), str) and not getattr(node, attribute):
+            return source
+        # don't save None attributes
+        if getattr(node, attribute) is None:
+            return source
+        # get string alias of an attribute
+        attribute_value_str = cls._value_by_type(item=attribute, value=getattr(node, attribute))
+        if attribute_value_str is not None:
+            source = node_alias + '.' + attribute + ' = ' + attribute_value_str + '\n'
         return source
 
     @staticmethod
     def node_alias(node):
         # get text node alias-name
-        return node.name.replace(' ', '_').replace('.', '_').lower()
+        node_name = node.name.lower()
+        for ch in (' ', '.', '/'):
+            node_name = node_name.replace(ch, '_')
+        return node_name
 
     @staticmethod
     def _value_by_type(item, value):
