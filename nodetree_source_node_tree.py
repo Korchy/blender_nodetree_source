@@ -10,19 +10,22 @@ from .nodetree_source_node import Node
 class NodeTree:
 
     @classmethod
-    def to_source(cls, node_tree, parent_expr='', deep=0):
+    def to_source(cls, owner, node_tree, parent_expr='', deep=0):
+        print(node_tree, node_tree.type)
         # get node tree source
         source = ''
         # inputs
-        # if node_tree.inputs:
-        #     source += ('    ' * deep) + '# INPUTS' + '\n'
-        #     for c_input in node_tree.inputs:
-        #         source += ('    ' * deep) + c_input.rna_type.identifier + '\n'  # NodeSocketInterfaceXXX
-        # # outputs
-        # if node_tree.outputs:
-        #     source += ('    ' * deep) + '# OUTPUTS' + '\n'
-        #     for c_output in node_tree.outputs:
-        #         source += ('    ' * deep) + c_output.rna_type.identifier + '\n'  # NodeSocketInterfaceXXX
+        if node_tree.inputs:
+            source += ('    ' * deep) + '# INPUTS' + '\n'
+            for c_input in owner.inputs:
+                # source += ('    ' * deep) + c_input.bl_idname + '\n'  # NodeSocketInterfaceXXX
+                source += ('    ' * deep) + parent_expr + str(deep) + '.inputs.new(\'' + c_input.bl_idname + '\', \'' + c_input.name + '\')' + '\n'
+        # outputs
+        if node_tree.outputs:
+            source += ('    ' * deep) + '# OUTPUTS' + '\n'
+            for c_output in owner.outputs:
+                # source += ('    ' * deep) + c_output.rna_type.identifier + '\n'  # NodeSocketInterfaceXXX
+                source += ('    ' * deep) + parent_expr + str(deep) + '.outputs.new(\'' + c_output.bl_idname + '\', \'' + c_output.name + '\')' + '\n'
         # nodes
         if node_tree.nodes:
             source += '    ' * deep + '# NODES' + '\n'
@@ -31,10 +34,9 @@ class NodeTree:
                     # node group
                     source += ('    ' * deep) + parent_expr + str(deep + 1) + ' = bpy.data.node_groups.get(\'' + node.node_tree.name + '\')' + '\n'
                     source += ('    ' * deep) + 'if not ' + parent_expr + str(deep + 1) + ':' + '\n'
-                    source += cls.to_source(node_tree=node.node_tree, parent_expr=parent_expr, deep=deep + 1) + '\n'
-                    # source += ('    ' * deep) + 'node_group' + str(deep) + ' = node_groups.new(\'' + node.node_tree.name + '\', \'ShaderNodeTree\')' + '\n'
+                    source += ('    ' * (deep + 1)) + 'node_tree' + str(deep + 1) + ' = bpy.data.node_groups.new(\'' + node.node_tree.name + '\', \'' + node_tree.bl_idname + '\')' + '\n'
+                    source += cls.to_source(owner=node, node_tree=node.node_tree, parent_expr=parent_expr, deep=deep + 1) + '\n'
                     source += Node.to_source(node=node, parent_expr='node_tree' + str(deep), deep=deep) + '\n'
-
                 else:
                     # simple node
                     source += Node.to_source(node=node, parent_expr='node_tree' + str(deep), deep=deep) + '\n'
@@ -42,8 +44,8 @@ class NodeTree:
         if node_tree.links:
             source += ('    ' * deep) + '# LINKS' + '\n'
             for link in node_tree.links:
-                from_node_alias = Node.node_alias(link.from_node)
-                to_node_alias = Node.node_alias(link.to_node)
+                from_node_alias = Node.node_alias(node=link.from_node, deep=deep)
+                to_node_alias = Node.node_alias(node=link.to_node, deep=deep)
                 source += ('    ' * deep) + parent_expr + str(deep) + '.links.new(' \
                           + from_node_alias + '.outputs[' + str(list(link.from_node.outputs).index(link.from_socket)) + ']' + \
                           ', ' + to_node_alias + '.inputs[' + str(list(link.to_node.inputs).index(link.to_socket)) + ']' + \

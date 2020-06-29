@@ -21,6 +21,7 @@ class Material:
                 material_name=cls.material_alias(material=active_material_object)
             ) + '\n'
             source += NodeTree.to_source(
+                owner=active_material_object,
                 node_tree=active_material_object.node_tree,
                 parent_expr='node_tree'
             )

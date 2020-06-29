@@ -13,7 +13,7 @@ class Node:
     def to_source(cls, node, parent_expr='', deep=0):
         # get node source
         source = ''
-        node_alias = cls.node_alias(node=node)
+        node_alias = cls.node_alias(node=node, deep=deep)
         source += ('    ' * deep) + node_alias + ' = ' + parent_expr + '.nodes.new(\'' + node.bl_idname + '\')' + '\n'
         # attributes
         # don't process
@@ -49,9 +49,10 @@ class Node:
         return source
 
     @staticmethod
-    def node_alias(node):
+    def node_alias(node, deep=0):
         # get text node alias-name
         node_name = node.name.lower()
         for ch in (' ', '.', '/'):
             node_name = node_name.replace(ch, '_')
+        node_name += '_' + str(deep)
         return node_name
