@@ -7,13 +7,75 @@
 # Blender types conversion
 # Blender types with prefix BL
 
+import sys
+from mathutils import Vector, Color
+
+
+class BlTypesConversion:
+
+    @staticmethod
+    def source_by_type(item, value, parent_expr=''):
+        # value as string by type
+        if isinstance(value, Vector):
+            return BLVector.to_source(value=value, parent_expr=parent_expr)
+        elif isinstance(value, Color):
+            return BLColor.to_source(value=value, parent_expr=parent_expr)
+        elif isinstance(value, (int, float, bool, set)):
+            return ((parent_expr + ' = ') if parent_expr else '') + str(value)
+        elif isinstance(value, str):
+            return ((parent_expr + ' = ') if parent_expr else '') + '\'' + value + '\''
+        elif hasattr(sys.modules[__name__], 'BL' + value.__class__.__name__):
+            value_class = getattr(sys.modules[__name__], 'BL' + value.__class__.__name__)
+            return value_class.to_source(value=value, parent_expr=parent_expr)
+        else:
+            print('ERR: Undefined type: item = ', item,
+                  'value = ', value, ' (', type(value), ')',
+                  'item_class = ', item.__class__.__name__,
+                  'value_class = ', value.__class__.__name__,
+                  'parent_expr = ', parent_expr
+                  )
+            return None
+
+    @staticmethod
+    def source_from_complex_type(value, excluded_attributes: list = None, preordered_attributes: list = None, complex_attributes: list = None, parent_expr=''):
+        # excluded attributes - don't process them (ex: type, select)
+        excluded_attributes = excluded_attributes if excluded_attributes is not None else []
+        # preordered attributes - need to be processed first because when changed - change another attributes (ex: mode)
+        preordered_attributes = preordered_attributes if preordered_attributes is not None else []
+        # complex attributes - can be readonly but must be processed inside themselves  (ex: mapping)
+        complex_attributes = complex_attributes if complex_attributes is not None else []
+        attributes = [
+            attr for attr in dir(value) if
+            not attr.startswith('__')
+            and (not attr.startswith('bl_') or attr == 'bl_idname')
+            and attr not in excluded_attributes
+            and attr not in preordered_attributes  # don't add preorderd attributes, added first manually
+            and hasattr(value, attr)
+            and not callable(getattr(value, attr))
+            and getattr(value, attr) is not None    # don't add attributes == None
+            and not (isinstance(getattr(value, attr), str) and not getattr(value, attr))  # don't add attributes == '' (empty string)
+            and (not value.is_property_readonly(attr) or attr in complex_attributes)
+        ]
+        source = ''
+        # first - preordered attributes, next - all other attributes
+        all_attributes = preordered_attributes + attributes
+        for attribute in all_attributes:
+            source_expr = BlTypesConversion.source_by_type(
+                item=attribute,
+                value=getattr(value, attribute),
+                parent_expr=parent_expr + '.' + attribute
+            )
+            if source_expr is not None:
+                source += source_expr + ('' if source_expr[-1:] == '\n' else '\n')
+        return source
+
 
 class TupleType:
     # common class for tuple-type types
 
     @classmethod
-    def to_source(cls, value):
-        return str(tuple(value))
+    def to_source(cls, value, parent_expr=''):
+        return ((parent_expr + ' = ') if parent_expr else '') + str(tuple(value))
 
 
 class BLColor(TupleType):
@@ -34,128 +96,91 @@ class BLEuler(TupleType):
     pass
 
 
+class BLbpy_prop_collection:
+    # collection of properties
+    @classmethod
+    def to_source(cls, value, parent_expr=''):
+        source = ''
+        for item_index, item in enumerate(value):
+            source_expr = BlTypesConversion.source_by_type(
+                item=item,
+                value=value[item_index],
+                parent_expr=parent_expr + '[' + str(item_index) + ']'
+            )
+            if source_expr is not None:
+                source += source_expr
+        return source
+
+
 class BLScene:
 
     @classmethod
-    def to_source(cls, value):
-        return 'bpy.data.scenes.get(\'' + value.name + '\')'
+    def to_source(cls, value, parent_expr=''):
+        return ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.scenes.get(\'' + value.name + '\')'
 
 
 class BLObject:
 
     @classmethod
-    def to_source(cls, value):
-        return 'bpy.data.objects.get(\'' + value.name + '\')'
+    def to_source(cls, value, parent_expr=''):
+        return ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.objects.get(\'' + value.name + '\')'
 
 
 class BLImage:
 
     @classmethod
-    def to_source(cls, value):
-        return 'bpy.data.images.get(\'' + value.name + '\')'
+    def to_source(cls, value, parent_expr=''):
+        return ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.images.get(\'' + value.name + '\')'
 
 
 class BLText:
 
     @classmethod
-    def to_source(cls, value):
-        return 'bpy.data.texts.get(\'' + value.name + '\')'
+    def to_source(cls, value, parent_expr):
+        return ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.texts.get(\'' + value.name + '\')'
 
 
 class BLParticleSystem:
 
     @classmethod
-    def to_source(cls, value):
-        return 'bpy.context.active_object.particle_systems.get(\'' + value.name + '\')'
+    def to_source(cls, value, parent_expr=''):
+        return ((parent_expr + ' = ') if parent_expr else '') + 'bpy.context.active_object.particle_systems.get(\'' + value.name + '\')'
 
 
 class BLCurveMapping:
+    # mapping and curves
 
     @classmethod
-    def to_source(cls, value):
-        return 'x'
+    def to_source(cls, value, parent_expr=''):
+        # complex attributes - can be readonly but must be processed inside themselves
+        return BlTypesConversion.source_from_complex_type(
+            value=value,
+            complex_attributes=['curves'],
+            parent_expr=parent_expr
+        )
 
 
-# class BLCurveMapping:
-#
-#     @classmethod
-#     def _instance_to_json(cls, instance):
-#         json = {
-#             'use_clip': instance.use_clip,
-#             'clip_min_x': instance.clip_min_x,
-#             'clip_min_y': instance.clip_min_y,
-#             'clip_max_x': instance.clip_max_x,
-#             'clip_max_y': instance.clip_max_y,
-#             'black_level': BLColor.to_json(instance.black_level),
-#             'white_level': BLColor.to_json(instance.white_level),
-#             'curves': []
-#         }
-#         if hasattr(instance, 'extend'):
-#             json['extend'] = instance.extend
-#         if hasattr(instance, 'tone'):
-#             json['tone'] = instance.tone
-#         for curve_map in instance.curves:
-#             json['curves'].append(BLCurveMap.to_json(curve_map))
-#         return json
-#
-#     @classmethod
-#     def _json_to_instance(cls, instance, json):
-#         instance.use_clip = json['use_clip']
-#         instance.clip_min_x = json['clip_min_x']
-#         instance.clip_min_y = json['clip_min_y']
-#         instance.clip_max_x = json['clip_max_x']
-#         instance.clip_max_y = json['clip_max_y']
-#         if 'black_level' in json and hasattr(instance, 'black_level'):
-#             BLColor.from_json(instance.black_level, json['black_level'])
-#         if 'white_level' in json and hasattr(instance, 'white_level'):
-#             BLColor.from_json(instance.white_level, json['white_level'])
-#         if 'extend' in json and hasattr(instance, 'extend'):
-#             instance.extend = json['extend']
-#         if 'tone' in json and hasattr(instance, 'tone'):
-#             instance.tone = json['tone']
-#         for i, curve in enumerate(json['curves']):
-#             BLCurveMap.from_json(instance.curves[i], curve)
-#         instance.update()
-#
-#
-# class BLCurveMap:
-#
-#     @classmethod
-#     def _instance_to_json(cls, instance):
-#         json = {
-#             'points': []
-#         }
-#         if hasattr(instance, 'extend'):
-#             json['extend'] = instance.extend
-#         for point in instance.points:
-#             json['points'].append(BLCurveMapPoint.to_json(point))
-#         return json
-#
-#     @classmethod
-#     def _json_to_instance(cls, instance, json):
-#         if 'extend' in json and hasattr(instance, 'extend'):
-#             instance.extend = json['extend']
-#         for i, point in enumerate(json['points']):
-#             if len(instance.points) <= i:
-#                 if 'instance' in point:
-#                     instance.points.new(point['instance']['location']['instance']['x'], point['instance']['location']['instance']['y'])
-#                 else:   # older compatibility (was [...] now {class: xx, instance={...}})
-#                     instance.points.new(point['location'][0], point['location'][0])
-#             BLCurveMapPoint.from_json(instance.points[i], point)
-#
-#
-# class BLCurveMapPoint:
-#
-#     @classmethod
-#     def _instance_to_json(cls, instance):
-#         return {
-#             'location': BLVector.to_json(instance=instance.location),
-#             'handle_type': instance.handle_type,
-#             'select': instance.select
-#         }
-#
-#     @classmethod
-#     def _json_to_instance(cls, instance, json):
-#         BLVector.from_json(instance=instance.location, json=json['location'])
-#         instance.handle_type = json['handle_type']
-#         instance.select = json['select']
+class BLCurveMap:
+    # curve and points
+
+    @classmethod
+    def to_source(cls, value, parent_expr=''):
+        return BlTypesConversion.source_from_complex_type(
+            value=value,
+            complex_attributes=['points'],
+            parent_expr=parent_expr
+        )
+
+
+class BLCurveMapPoint:
+    # point
+
+    @classmethod
+    def to_source(cls, value, parent_expr=''):
+        source = 'if ' + parent_expr[-2:][:1] + ' >= len(' + parent_expr[:-3] + '):' + '\n'
+        source += '    ' + parent_expr[:-3] + '.new(1.0, 1.0)' + '\n'
+        source += BlTypesConversion.source_from_complex_type(
+            value=value,
+            parent_expr=parent_expr
+        )
+        return source
