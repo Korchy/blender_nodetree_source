@@ -136,7 +136,7 @@ class BLImage:
 class BLText:
 
     @classmethod
-    def to_source(cls, value, parent_expr):
+    def to_source(cls, value, parent_expr=''):
         return ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.texts.get(\'' + value.name + '\')'
 
 
@@ -145,6 +145,13 @@ class BLParticleSystem:
     @classmethod
     def to_source(cls, value, parent_expr=''):
         return ((parent_expr + ' = ') if parent_expr else '') + 'bpy.context.active_object.particle_systems.get(\'' + value.name + '\')'
+
+
+class BLShaderNodeTree:
+
+    @classmethod
+    def to_source(cls, value, parent_expr=''):
+        return ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.node_groups.get(\'' + value.name + '\')'
 
 
 class BLCurveMapping:
@@ -178,7 +185,7 @@ class BLCurveMapPoint:
     @classmethod
     def to_source(cls, value, parent_expr=''):
         source = 'if ' + parent_expr[-2:][:1] + ' >= len(' + parent_expr[:-3] + '):' + '\n'
-        source += '    ' + parent_expr[:-3] + '.new(1.0, 1.0)' + '\n'
+        source += '    ' + parent_expr[:-3] + '.new(' + str(value.location.x) + ', ' + str(value.location.y) + ')' + '\n'
         source += BlTypesConversion.source_from_complex_type(
             value=value,
             parent_expr=parent_expr

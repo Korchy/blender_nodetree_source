@@ -21,7 +21,8 @@ class Material:
                 material_name=cls.material_alias(material=active_material_object)
             ) + '\n'
             source += NodeTree.to_source(
-                node_tree=active_material_object.node_tree
+                node_tree=active_material_object.node_tree,
+                parent_expr='node_tree'
             )
         return source
 
@@ -32,15 +33,15 @@ class Material:
         if material_type == 'OBJECT':
             source = material_name + ' = bpy.data.materials.new(name=\'' + material_name + '\')' + '\n'
             source += material_name + '.use_nodes = True' + '\n'
-            source += 'node_tree = ' + material_name + '.node_tree' + '\n'
+            source += 'node_tree0 = ' + material_name + '.node_tree' + '\n'
         elif material_type == 'WORLD':
             source = material_name + ' = bpy.data.worlds.new(name=\'' + material_name + '\')' + '\n'
             source += material_name + '.use_nodes = True' + '\n'
-            source += 'node_tree = ' + material_name + '.node_tree' + '\n'
+            source += 'node_tree0 = ' + material_name + '.node_tree' + '\n'
         elif material_type == 'CONPOSITING':
-            source = 'node_tree = bpy.context.scene.node_tree' + '\n'
+            source = 'node_tree0 = bpy.context.scene.node_tree' + '\n'
             source += 'bpy.context.scene.use_nodes = True' + '\n'
-        source += NodeTree.clear_source()
+        source += NodeTree.clear_source(parent_expr='node_tree0')
         return source
 
     @classmethod
