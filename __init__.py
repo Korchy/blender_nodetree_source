@@ -7,6 +7,7 @@
 from . import nodetree_source_ops
 from . import nodetree_source_panel
 from . import nodetree_source_preferences
+from . import nodetree_source_message_box
 from .addon import Addon
 
 
@@ -25,6 +26,7 @@ bl_info = {
 
 def register():
     if not Addon.dev_mode():
+        nodetree_source_message_box.register()
         nodetree_source_ops.register()
         nodetree_source_panel.register()
         nodetree_source_preferences.register()
@@ -37,6 +39,7 @@ def unregister():
         nodetree_source_preferences.unregister()
         nodetree_source_panel.unregister()
         nodetree_source_ops.unregister()
+        nodetree_source_message_box.unregister()
 
 
 if __name__ == '__main__':

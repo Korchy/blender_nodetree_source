@@ -37,7 +37,7 @@ class NodeTree:
             for node in all_nodes:
                 if node.type == 'GROUP':
                     # node group
-                    if node.node_tree.name not in processed_node_groups:
+                    if node.node_tree and node.node_tree.name not in processed_node_groups:
                         source += ('    ' * deep) + parent_expr + str(deep + 1) + ' = bpy.data.node_groups.get(\'' + node.node_tree.name + '\')' + '\n'
                         source += ('    ' * deep) + 'if not ' + parent_expr + str(deep + 1) + ':' + '\n'
                         source += ('    ' * (deep + 1)) + 'node_tree' + str(deep + 1) + ' = bpy.data.node_groups.new(\'' + node.node_tree.name + '\', \'' + node_tree.bl_idname + '\')' + '\n'

@@ -17,10 +17,12 @@ class NODETREE_SOURCE_PT_panel_3d_view(Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator('nodetree_source.to_source', icon='NODETREE')
-        layout.label(text='Export to')
-        row = layout.row()
-        row.prop(data=context.preferences.addons[__package__].preferences, property='dest_type', expand=True)
+        layout.label(text='Builder')
+        layout.operator('nodetree_source.material_to_text', icon='NODETREE')
+        layout.operator('nodetree_source.material_to_library', icon='PACKAGE')
+        # layout.label(text='Export to')
+        # row = layout.row()
+        # row.prop(data=context.preferences.addons[__package__].preferences, property='dest_type', expand=True)
 
 
 class NODETREE_SOURCE_PT_panel_shader_editor(Panel):
@@ -32,10 +34,12 @@ class NODETREE_SOURCE_PT_panel_shader_editor(Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator('nodetree_source.to_source', icon='NODETREE')
-        layout.label(text='Export to')
-        row = layout.row()
-        row.prop(data=context.preferences.addons[__package__].preferences, property='dest_type', expand=True)
+        layout.label(text='Builder')
+        layout.operator('nodetree_source.material_to_text', icon='NODETREE')
+        layout.operator('nodetree_source.material_to_library', icon='PACKAGE')
+        # layout.label(text='Export to')
+        # row = layout.row()
+        # row.prop(data=context.preferences.addons[__package__].preferences, property='dest_type', expand=True)
 
 
 def register():
