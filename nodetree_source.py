@@ -38,6 +38,14 @@ class NodeTreeSource:
                 for item in external_items_list:
                     if os.path.exists(item['path']):
                         copyfile(item['path'], os.path.join(external_items_path, item['name']))
+            # add to library list
+            library_item = context.window_manager.nodetree_source_library_items.add()
+            library_item.name = source_file_alias
+
+    @classmethod
+    def material_from_library(cls, context, scene_data):
+        # get material from library
+        print('material from library')
 
     @staticmethod
     def _material_library_path():

@@ -77,11 +77,42 @@ class NODETREE_SOURCE_OT_material_to_library(Operator):
             return False
 
 
+class NODETREE_SOURCE_OT_material_from_library(Operator):
+    bl_idname = 'nodetree_source.material_from_library'
+    bl_label = 'Material from Library'
+    bl_description = 'Get material from source library'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        NodeTreeSource.material_from_library(
+            context=context,
+            scene_data=bpy.data
+        )
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        if Material.get_subtype(context=context) == 'ShaderNodeTree'\
+                and Material.get_subtype2(context=context) == 'OBJECT'\
+                and context.active_object:
+            return True
+        elif Material.get_subtype(context=context) == 'ShaderNodeTree'\
+                and Material.get_subtype2(context=context) == 'WORLD':
+            return True
+        elif Material.get_subtype(context=context) == 'CompositorNodeTree'\
+                and context.scene.use_nodes:
+            return True
+        else:
+            return False
+
+
 def register():
     register_class(NODETREE_SOURCE_OT_material_to_text)
     register_class(NODETREE_SOURCE_OT_material_to_library)
+    register_class(NODETREE_SOURCE_OT_material_from_library)
 
 
 def unregister():
+    unregister_class(NODETREE_SOURCE_OT_material_from_library)
     unregister_class(NODETREE_SOURCE_OT_material_to_library)
     unregister_class(NODETREE_SOURCE_OT_material_to_text)
