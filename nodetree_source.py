@@ -5,6 +5,7 @@
 #   https://github.com/Korchy/blender_nodetree_source
 
 import os
+from shutil import copyfile
 from .nodetree_source_material import Material
 import bpy
 
@@ -14,22 +15,34 @@ class NodeTreeSource:
     @classmethod
     def material_to_library(cls, context, scene_data):
         # add material to source library
+        material = Material.active_material_object(context=context)[0]
         source = 'import bpy' + '\n\n'
         source += Material.to_source(context=context, scene_data=scene_data)
         # save source to file
         library_path = cls._material_library_path()
-        source_file_name = Material.material_alias(material=Material.active_material_object(context=context)[0]) + '.py'
-        source_file_name_full = os.path.join(library_path, source_file_name)
-        if os.path.exists(source_file_name_full):
+        source_file_alias = Material.material_alias(material=material)
+        source_file_name = source_file_alias + '.py'
+        source_file_path = os.path.join(library_path, source_file_name)
+        if os.path.exists(source_file_path):
             bpy.ops.nodetree_source.messagebox('INVOKE_DEFAULT', message='Material with the same name already exists in the library!')
         else:
-            with open(file=source_file_name_full, mode='w', encoding='utf8') as source_file:
+            with open(file=source_file_path, mode='w', encoding='utf8') as source_file:
                 source_file.write(source)
+            # external items (textures,... etc)
+            external_items_list = Material.external_items(
+                material=material
+            )
+            if external_items_list:
+                external_items_path = os.path.join(library_path, source_file_alias)
+                os.makedirs(external_items_path)
+                for item in external_items_list:
+                    if os.path.exists(item['path']):
+                        copyfile(item['path'], os.path.join(external_items_path, item['name']))
 
     @staticmethod
     def _material_library_path():
         # return path to material library sources
-        library_path = os.path.join(os.path.dirname(__file__), 'node_tree_lib')
+        library_path = os.path.join(os.path.dirname(__file__), 'nodetree_source_library')
         if not os.path.exists(library_path):
             os.makedirs(library_path)
         return library_path

@@ -4,6 +4,8 @@
 # GitHub
 #   https://github.com/Korchy/blender_nodetree_source
 
+import os
+from .nodetree_source_file_manager import FileManager
 from .nodetree_source_node import Node
 
 
@@ -76,20 +78,24 @@ class NodeTree:
         source += '    ' + parent_expr + '.nodes.remove(node)' + '\n'
         return source
 
-    # @classmethod
-    # def external_items(cls, node_tree):
-    #     # returns external items (textures,... etc) list
-    #     rez = []
-    #     for node in node_tree.nodes:
-    #         if node.type == 'GROUP':
-    #             rez.extend(cls.external_items(node_tree=node.node_tree))
-    #         elif node.type == 'TEX_IMAGE' and node.image:
-    #             rez.append({
-    #                 'path': FileManager.abs_path(node.image.filepath),
-    #                 'name': node.image.name
-    #             })
-    #         elif node.type == 'SCRIPT' and node.mode == 'EXTERNAL' and node.filepath:
-    #             rez.append({
-    #                 'path': FileManager.abs_path(node.filepath)
-    #             })
-    #     return rez
+    @classmethod
+    def external_items(cls, node_tree):
+        # returns external items (textures,... etc) list
+        rez = []
+        if node_tree:
+            for node in node_tree.nodes:
+                if node.type == 'GROUP':
+                    rez.extend(cls.external_items(node_tree=node.node_tree))
+                elif node.type == 'TEX_IMAGE' and node.image:
+                    rez.append({
+                        'type': 'TEXTURE',
+                        'path': FileManager.abs_path(node.image.filepath),
+                        'name': node.image.name
+                    })
+                elif node.type == 'SCRIPT' and node.mode == 'EXTERNAL' and node.filepath:
+                    rez.append({
+                        'type': 'SCRIPT',
+                        'path': FileManager.abs_path(node.filepath),
+                        'name': os.path.basename(node.filepath)
+                    })
+        return rez

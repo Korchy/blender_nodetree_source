@@ -60,6 +60,13 @@ class Material:
         return material_object
 
     @staticmethod
+    def external_items(material):
+        # return external items list (textures,... etc)
+        return NodeTree.external_items(
+            node_tree=material.node_tree
+        )
+
+    @staticmethod
     def get_subtype(context):
         # material subtype
         if context.area and context.space_data.type == 'NODE_EDITOR':
