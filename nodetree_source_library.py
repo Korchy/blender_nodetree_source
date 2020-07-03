@@ -10,6 +10,8 @@ import shutil
 
 class NodeTreeSourceLibrary:
 
+    idname = 'nodetree_source_library'
+
     @classmethod
     def material_from_library(cls, context, material_alias):
         # get material from library
@@ -44,10 +46,10 @@ class NodeTreeSourceLibrary:
             lib_item = context.window_manager.nodetree_source_lib_items.add()
             lib_item.name = os.path.splitext(source_file)[0]
 
-    @staticmethod
-    def library_path():
+    @classmethod
+    def library_path(cls):
         # return path to material library sources
-        library_path = os.path.join(os.path.dirname(__file__), 'nodetree_source_library')
+        library_path = os.path.join(os.path.dirname(__file__), cls.idname)
         if not os.path.exists(library_path):
             os.makedirs(library_path)
         return library_path

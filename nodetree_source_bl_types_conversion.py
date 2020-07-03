@@ -139,7 +139,11 @@ class BLImage:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
-        return ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.images.get(\'' + value.name + '\')'
+        source = ('    ' * deep) + 'if \'' + value.name + '\' not in bpy.data.images:' + '\n'
+        source += ('    ' * (deep + 1)) + 'if os.path.exists(os.path.join(external_items_dir, \'' + value.name + '\')):' + '\n'
+        source += ('    ' * (deep + 2)) + 'bpy.data.images.load(os.path.join(external_items_dir, \'' + value.name + '\'))' + '\n'
+        source += ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.images.get(\'' + value.name + '\')'
+        return source
 
 
 class BLText:

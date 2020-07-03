@@ -87,8 +87,7 @@ class NODETREE_SOURCE_OT_library_to_add_on(Operator):
 
     def execute(self, context):
         NodeTreeSource.library_to_add_on(
-            context=context,
-            scene_data=bpy.data
+            context=context
         )
         return {'FINISHED'}
 
