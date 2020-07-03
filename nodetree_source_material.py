@@ -5,6 +5,7 @@
 #   https://github.com/Korchy/blender_nodetree_source
 
 from .nodetree_source_node_tree import NodeTree
+from .nodetree_source_context import NodeTreeSourceContext
 
 
 class Material:
@@ -49,13 +50,12 @@ class Material:
     def active_material_object(cls, context):
         # get active material object
         material_object = None
-        if cls.get_subtype(context=context) == 'ShaderNodeTree'\
-                and cls.get_subtype2(context=context) == 'OBJECT':
-            material_object = (context.active_object.active_material, cls.get_subtype2(context=context))
-        elif cls.get_subtype(context=context) == 'ShaderNodeTree'\
-                and cls.get_subtype2(context=context) == 'WORLD':
-            material_object = (context.scene.world, cls.get_subtype2(context=context))
-        elif cls.get_subtype(context=context) == 'CompositorNodeTree':
+        subtype, subtype2 = NodeTreeSourceContext.context(context=context)
+        if subtype == 'ShaderNodeTree' and subtype2 == 'OBJECT':
+            material_object = (context.active_object.active_material, subtype2)
+        elif subtype == 'ShaderNodeTree' and subtype2 == 'WORLD':
+            material_object = (context.scene.world, subtype2)
+        elif subtype == 'CompositorNodeTree':
             material_object = (context.scene, 'CONPOSITING')
         return material_object
 
@@ -65,22 +65,6 @@ class Material:
         return NodeTree.external_items(
             node_tree=material.node_tree
         )
-
-    @staticmethod
-    def get_subtype(context):
-        # material subtype
-        if context.area and context.space_data.type == 'NODE_EDITOR':
-            return context.space_data.tree_type
-        else:
-            return 'ShaderNodeTree'
-
-    @staticmethod
-    def get_subtype2(context):
-        # material subtype2
-        if context.area and context.space_data.type == 'NODE_EDITOR':
-            return context.space_data.shader_type
-        else:
-            return 'OBJECT'
 
     @staticmethod
     def material_alias(material):

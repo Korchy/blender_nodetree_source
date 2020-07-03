@@ -5,46 +5,54 @@
 #   https://github.com/Korchy/blender_nodetree_source
 
 import bpy
+from bpy.props import IntProperty
 from bpy.types import Operator
 from bpy.utils import register_class, unregister_class
 from .nodetree_source_library import NodeTreeSourceLibrary
-from .nodetree_source_material import Material
+from .nodetree_source_context import NodeTreeSourceContext
 
 
-class NODETREE_SOURCE_LIBRARY_OT_material_from_library(Operator):
-    bl_idname = 'nodetree_source_library.material_from_library'
-    bl_label = 'Material from Library'
+class NODETREE_SOURCE_LIB_OT_material_from_library(Operator):
+    bl_idname = 'nodetree_source_lib.material_from_library'
+    bl_label = 'Load Material from Library'
     bl_description = 'Get material from NodeTree Source library'
     bl_options = {'REGISTER', 'UNDO'}
 
+    material_id: IntProperty(
+        default=-0
+    )
+
     def execute(self, context):
+        # add material from source library to scene
+        active_material_id = context.window_manager.nodetree_source_lib_active_item
+        if active_material_id != self.material_id:
+            context.window_manager.nodetree_source_lib_active_item = self.material_id
+        material_alias = context.window_manager.nodetree_source_lib_items[context.window_manager.nodetree_source_lib_active_item].name
         NodeTreeSourceLibrary.material_from_library(
             context=context,
-            scene_data=bpy.data
+            material_alias=material_alias
         )
         return {'FINISHED'}
 
     @classmethod
     def poll(cls, context):
-
-        # todo - correct without Material class, maybe make separate class "nodetree_context"
-
-        if Material.get_subtype(context=context) == 'ShaderNodeTree'\
-                and Material.get_subtype2(context=context) == 'OBJECT'\
+        subtype, subtype2 = NodeTreeSourceContext.context(context=context)
+        if subtype == 'ShaderNodeTree'\
+                and subtype2 == 'OBJECT'\
                 and context.active_object:
             return True
-        elif Material.get_subtype(context=context) == 'ShaderNodeTree'\
-                and Material.get_subtype2(context=context) == 'WORLD':
+        elif subtype == 'ShaderNodeTree'\
+                and subtype2 == 'WORLD':
             return True
-        elif Material.get_subtype(context=context) == 'CompositorNodeTree'\
+        elif subtype == 'CompositorNodeTree'\
                 and context.scene.use_nodes:
             return True
         else:
             return False
 
 
-class NODETREE_SOURCE_LIBRARY_OT_remove_material(Operator):
-    bl_idname = 'nodetree_source_library.remove_material'
+class NODETREE_SOURCE_LIB_OT_remove_material(Operator):
+    bl_idname = 'nodetree_source_lib.remove_material'
     bl_label = 'Remove material from Library'
     bl_description = 'Remove material from NodeTree Source library'
     bl_options = {'REGISTER', 'UNDO'}
@@ -58,17 +66,17 @@ class NODETREE_SOURCE_LIBRARY_OT_remove_material(Operator):
 
     @classmethod
     def poll(cls, context):
-        if 0 <= context.window_manager.nodetree_source_library_active_item < len(context.window_manager.nodetree_source_library_items):
+        if 0 <= context.window_manager.nodetree_source_lib_active_item < len(context.window_manager.nodetree_source_lib_items):
             return True
         else:
             return False
 
 
 def register():
-    register_class(NODETREE_SOURCE_LIBRARY_OT_material_from_library)
-    register_class(NODETREE_SOURCE_LIBRARY_OT_remove_material)
+    register_class(NODETREE_SOURCE_LIB_OT_material_from_library)
+    register_class(NODETREE_SOURCE_LIB_OT_remove_material)
 
 
 def unregister():
-    unregister_class(NODETREE_SOURCE_LIBRARY_OT_remove_material)
-    unregister_class(NODETREE_SOURCE_LIBRARY_OT_material_from_library)
+    unregister_class(NODETREE_SOURCE_LIB_OT_remove_material)
+    unregister_class(NODETREE_SOURCE_LIB_OT_material_from_library)

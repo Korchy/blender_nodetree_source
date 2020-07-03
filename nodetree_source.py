@@ -7,6 +7,7 @@
 import os
 from shutil import copyfile
 from .nodetree_source_material import Material
+from .nodetree_source_library import NodeTreeSourceLibrary
 import bpy
 
 
@@ -19,7 +20,7 @@ class NodeTreeSource:
         source = 'import bpy' + '\n\n'
         source += Material.to_source(context=context, scene_data=scene_data)
         # save source to file
-        library_path = cls._material_library_path()
+        library_path = NodeTreeSourceLibrary.library_path()
         source_file_alias = Material.material_alias(material=material)
         source_file_name = source_file_alias + '.py'
         source_file_path = os.path.join(library_path, source_file_name)
@@ -39,21 +40,8 @@ class NodeTreeSource:
                     if os.path.exists(item['path']):
                         copyfile(item['path'], os.path.join(external_items_path, item['name']))
             # add to library list
-            library_item = context.window_manager.nodetree_source_library_items.add()
+            library_item = context.window_manager.nodetree_source_lib_items.add()
             library_item.name = source_file_alias
-
-    @classmethod
-    def material_from_library(cls, context, scene_data):
-        # get material from library
-        print('material from library')
-
-    @staticmethod
-    def _material_library_path():
-        # return path to material library sources
-        library_path = os.path.join(os.path.dirname(__file__), 'nodetree_source_library')
-        if not os.path.exists(library_path):
-            os.makedirs(library_path)
-        return library_path
 
     @staticmethod
     def material_to_text(context, scene_data):

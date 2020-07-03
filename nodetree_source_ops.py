@@ -8,7 +8,7 @@ import bpy
 from bpy.types import Operator
 from bpy.utils import register_class, unregister_class
 from .nodetree_source import NodeTreeSource
-from .nodetree_source_material import Material
+from .nodetree_source_context import NodeTreeSourceContext
 
 
 class NODETREE_SOURCE_OT_material_to_text(Operator):
@@ -26,18 +26,19 @@ class NODETREE_SOURCE_OT_material_to_text(Operator):
 
     @classmethod
     def poll(cls, context):
-        if Material.get_subtype(context=context) == 'ShaderNodeTree'\
-                and Material.get_subtype2(context=context) == 'OBJECT'\
+        subtype, subtype2 = NodeTreeSourceContext.context(context=context)
+        if subtype == 'ShaderNodeTree'\
+                and subtype2 == 'OBJECT'\
                 and context.active_object\
                 and context.active_object.active_material\
                 and context.active_object.active_material.node_tree:
             return True
-        elif Material.get_subtype(context=context) == 'ShaderNodeTree'\
-                and Material.get_subtype2(context=context) == 'WORLD'\
+        elif subtype == 'ShaderNodeTree'\
+                and subtype2 == 'WORLD'\
                 and context.scene.world\
                 and context.scene.world.use_nodes:
             return True
-        elif Material.get_subtype(context=context) == 'CompositorNodeTree'\
+        elif subtype == 'CompositorNodeTree'\
                 and context.scene.use_nodes:
             return True
         else:
@@ -59,18 +60,19 @@ class NODETREE_SOURCE_OT_material_to_library(Operator):
 
     @classmethod
     def poll(cls, context):
-        if Material.get_subtype(context=context) == 'ShaderNodeTree'\
-                and Material.get_subtype2(context=context) == 'OBJECT'\
+        subtype, subtype2 = NodeTreeSourceContext.context(context=context)
+        if subtype == 'ShaderNodeTree'\
+                and subtype2 == 'OBJECT'\
                 and context.active_object\
                 and context.active_object.active_material\
                 and context.active_object.active_material.node_tree:
             return True
-        elif Material.get_subtype(context=context) == 'ShaderNodeTree'\
-                and Material.get_subtype2(context=context) == 'WORLD'\
+        elif subtype == 'ShaderNodeTree'\
+                and subtype2 == 'WORLD'\
                 and context.scene.world\
                 and context.scene.world.use_nodes:
             return True
-        elif Material.get_subtype(context=context) == 'CompositorNodeTree'\
+        elif subtype == 'CompositorNodeTree'\
                 and context.scene.use_nodes:
             return True
         else:

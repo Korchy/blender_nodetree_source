@@ -8,8 +8,8 @@ from bpy.types import Panel, UIList
 from bpy.utils import register_class, unregister_class
 
 
-class NODETREE_SOURCE_LIBRARY_PT_panel_3d_view(Panel):
-    bl_idname = 'NODETREE_SOURCE_LIBRARY_PT_panel_3d_view'
+class NODETREE_SOURCE_LIB_PT_panel_3d_view(Panel):
+    bl_idname = 'NODETREE_SOURCE_LIB_PT_panel_3d_view'
     bl_label = 'NodeTree Source Library'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -19,19 +19,19 @@ class NODETREE_SOURCE_LIBRARY_PT_panel_3d_view(Panel):
         layout = self.layout
         row = layout.row()
         row.template_list(
-            listtype_name='NODETREE_SOURCE_LIBRARY_UL_library_items',
-            list_id='nodetree_source_library_items',
+            listtype_name='NODETREE_SOURCE_LIB_UL_lib_items',
+            list_id='nodetree_source_lib_items',
             dataptr=context.window_manager,
-            propname='nodetree_source_library_items',
+            propname='nodetree_source_lib_items',
             active_dataptr=context.window_manager,
-            active_propname='nodetree_source_library_active_item'
+            active_propname='nodetree_source_lib_active_item'
         )
         col = row.column(align=True)
-        col.operator('nodetree_source_library.remove_material', icon='REMOVE', text='')
+        col.operator('nodetree_source_lib.remove_material', icon='REMOVE', text='')
 
 
-class NODETREE_SOURCE_LIBRARY_PT_panel_shader_editor(Panel):
-    bl_idname = 'NODETREE_SOURCE_LIBRARY_PT_panel_shader_editor'
+class NODETREE_SOURCE_LIB_PT_panel_shader_editor(Panel):
+    bl_idname = 'NODETREE_SOURCE_LIB_PT_panel_shader_editor'
     bl_label = 'NodeTree Source Library'
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -41,31 +41,33 @@ class NODETREE_SOURCE_LIBRARY_PT_panel_shader_editor(Panel):
         layout = self.layout
         row = layout.row()
         row.template_list(
-            listtype_name='NODETREE_SOURCE_LIBRARY_UL_library_items',
-            list_id='nodetree_source_library_items1',
+            listtype_name='NODETREE_SOURCE_LIB_UL_lib_items',
+            list_id='nodetree_source_lib_items1',
             dataptr=context.window_manager,
-            propname='nodetree_source_library_items',
+            propname='nodetree_source_lib_items',
             active_dataptr=context.window_manager,
-            active_propname='nodetree_source_library_active_item'
+            active_propname='nodetree_source_lib_active_item'
         )
         col = row.column(align=True)
-        col.operator('nodetree_source_library.remove_material', icon='REMOVE', text='')
+        col.operator('nodetree_source_lib.remove_material', icon='REMOVE', text='')
 
 
-class NODETREE_SOURCE_LIBRARY_UL_library_items(UIList):
+class NODETREE_SOURCE_LIB_UL_lib_items(UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_property, index=0, flt_flag=0):
-        layout.operator('nodetree_source_library.material_from_library', icon='MATERIAL', text='')
-        layout.prop(data=item, property='name', icon='MATERIAL', text='', emboss=False)
+        op = layout.operator('nodetree_source_lib.material_from_library', icon='BRUSH_DATA', text='')
+        op.material_id = index
+        layout.label(text=item.name)
+        layout.label(text='', icon='MATERIAL')
 
 
 def register():
-    register_class(NODETREE_SOURCE_LIBRARY_UL_library_items)
-    register_class(NODETREE_SOURCE_LIBRARY_PT_panel_3d_view)
-    register_class(NODETREE_SOURCE_LIBRARY_PT_panel_shader_editor)
+    register_class(NODETREE_SOURCE_LIB_UL_lib_items)
+    register_class(NODETREE_SOURCE_LIB_PT_panel_3d_view)
+    register_class(NODETREE_SOURCE_LIB_PT_panel_shader_editor)
 
 
 def unregister():
-    unregister_class(NODETREE_SOURCE_LIBRARY_PT_panel_shader_editor)
-    unregister_class(NODETREE_SOURCE_LIBRARY_PT_panel_3d_view)
-    unregister_class(NODETREE_SOURCE_LIBRARY_UL_library_items)
+    unregister_class(NODETREE_SOURCE_LIB_PT_panel_shader_editor)
+    unregister_class(NODETREE_SOURCE_LIB_PT_panel_3d_view)
+    unregister_class(NODETREE_SOURCE_LIB_UL_lib_items)
