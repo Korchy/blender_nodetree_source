@@ -5,27 +5,23 @@
 #   https://github.com/Korchy/blender_nodetree_source
 
 from bpy.types import AddonPreferences
-from bpy.props import EnumProperty
+from bpy.props import StringProperty
 from bpy.utils import register_class, unregister_class
 
 
 class NODETREE_SOURCE_preferences(AddonPreferences):
     bl_idname = __package__
 
-    dest_type: EnumProperty(
-        name='Dest Type',
-        items=[
-            ('Text', 'Text', 'Text'),
-            ('File', 'File', 'File'),
-        ],
-        default='Text'
+    export_path: StringProperty(
+        name='Export Path',
+        subtype='DIR_PATH'
     )
 
     def draw(self, context):
         layout = self.layout
-        layout.label(text='Export to')
-        row = layout.row()
-        row.prop(self, property='dest_type', expand=True)
+        box = layout.box()
+        box.label(text='Export')
+        box.prop(self, property='export_path')
 
 
 def register():

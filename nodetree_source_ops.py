@@ -79,11 +79,27 @@ class NODETREE_SOURCE_OT_material_to_library(Operator):
             return False
 
 
+class NODETREE_SOURCE_OT_library_to_add_on(Operator):
+    bl_idname = 'nodetree_source.library_to_add_on'
+    bl_label = 'Distribute Library as Add-on'
+    bl_description = 'Export NodeTree Source library as separate add-on'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        NodeTreeSource.library_to_add_on(
+            context=context,
+            scene_data=bpy.data
+        )
+        return {'FINISHED'}
+
+
 def register():
     register_class(NODETREE_SOURCE_OT_material_to_text)
     register_class(NODETREE_SOURCE_OT_material_to_library)
+    register_class(NODETREE_SOURCE_OT_library_to_add_on)
 
 
 def unregister():
+    unregister_class(NODETREE_SOURCE_OT_library_to_add_on)
     unregister_class(NODETREE_SOURCE_OT_material_to_library)
     unregister_class(NODETREE_SOURCE_OT_material_to_text)

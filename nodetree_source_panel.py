@@ -4,7 +4,7 @@
 # GitHub
 #   https://github.com/Korchy/blender_nodetree_source
 
-from bpy.types import Panel, UIList
+from bpy.types import Panel
 from bpy.utils import register_class, unregister_class
 
 
@@ -19,6 +19,10 @@ class NODETREE_SOURCE_PT_panel_3d_view(Panel):
         layout = self.layout
         layout.operator('nodetree_source.material_to_text', icon='NODETREE')
         layout.operator('nodetree_source.material_to_library', icon='PACKAGE')
+        box = layout.box()
+        box.label(text='Export')
+        box.operator('nodetree_source.library_to_add_on', icon='FILE_SCRIPT')
+        box.prop(data=context.preferences.addons[__package__].preferences, property='export_path')
 
 
 class NODETREE_SOURCE_PT_panel_shader_editor(Panel):
@@ -32,6 +36,10 @@ class NODETREE_SOURCE_PT_panel_shader_editor(Panel):
         layout = self.layout
         layout.operator('nodetree_source.material_to_text', icon='NODETREE')
         layout.operator('nodetree_source.material_to_library', icon='PACKAGE')
+        box = layout.box()
+        box.label(text='Export')
+        box.operator('nodetree_source.library_to_add_on', icon='FILE_SCRIPT')
+        box.prop(data=context.preferences.addons[__package__].preferences, property='export_path')
 
 
 def register():

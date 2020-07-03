@@ -14,7 +14,7 @@ from .nodetree_source_context import NodeTreeSourceContext
 
 class NODETREE_SOURCE_LIB_OT_material_from_library(Operator):
     bl_idname = 'nodetree_source_lib.material_from_library'
-    bl_label = 'Load Material from Library'
+    bl_label = 'Add Material from Library'
     bl_description = 'Get material from NodeTree Source library'
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -32,6 +32,11 @@ class NODETREE_SOURCE_LIB_OT_material_from_library(Operator):
             context=context,
             material_alias=material_alias
         )
+        subtype, subtype2 = NodeTreeSourceContext.context(context=context)
+        if subtype == 'ShaderNodeTree' and subtype2 == 'OBJECT':
+            context.active_object.active_material = bpy.data.materials[-1]
+        elif subtype == 'ShaderNodeTree' and subtype2 == 'WORLD':
+            context.scene.world = bpy.data.worlds[-1]
         return {'FINISHED'}
 
     @classmethod
@@ -63,6 +68,13 @@ class NODETREE_SOURCE_LIB_OT_remove_material(Operator):
             scene_data=bpy.data
         )
         return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self, width=200)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text='Are you sure?')
 
     @classmethod
     def poll(cls, context):

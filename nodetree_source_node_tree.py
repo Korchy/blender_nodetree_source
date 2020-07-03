@@ -86,7 +86,7 @@ class NodeTree:
             for node in node_tree.nodes:
                 if node.type == 'GROUP':
                     rez.extend(cls.external_items(node_tree=node.node_tree))
-                elif node.type == 'TEX_IMAGE' and node.image:
+                elif node.type in ['TEX_IMAGE', 'TEX_ENVIRONMENT'] and node.image:
                     rez.append({
                         'type': 'TEXTURE',
                         'path': FileManager.abs_path(node.image.filepath),

@@ -14,6 +14,15 @@ import bpy
 class NodeTreeSource:
 
     @classmethod
+    def library_to_add_on(cls, context, scene_data):
+        # export library to separate add-on
+        export_path = context.preferences.addons[__package__].preferences.export_path
+        if export_path and os.path.exists(export_path):
+            print('export path')
+        else:
+            bpy.ops.nodetree_source.messagebox('INVOKE_DEFAULT', message='Please, specify the existed path for export.')
+
+    @classmethod
     def material_to_library(cls, context, scene_data):
         # add material to source library
         material = Material.active_material_object(context=context)[0]

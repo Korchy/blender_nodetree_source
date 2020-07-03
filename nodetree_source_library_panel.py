@@ -55,7 +55,7 @@ class NODETREE_SOURCE_LIB_PT_panel_shader_editor(Panel):
 class NODETREE_SOURCE_LIB_UL_lib_items(UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_property, index=0, flt_flag=0):
-        op = layout.operator('nodetree_source_lib.material_from_library', icon='BRUSH_DATA', text='')
+        op = layout.operator('nodetree_source_lib.material_from_library', icon='PLUGIN', text='')
         op.material_id = index
         layout.label(text=item.name)
         layout.label(text='', icon='MATERIAL')
