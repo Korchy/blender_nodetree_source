@@ -69,6 +69,7 @@ class NODETREE_SOURCE_LIB_OT_remove_material(Operator):
 
     def draw(self, context):
         layout = self.layout
+        layout.label(text='Removed material can not be restored!')
         layout.label(text='Are you sure?')
 
     @classmethod
