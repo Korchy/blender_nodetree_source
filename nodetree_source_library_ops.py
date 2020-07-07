@@ -32,11 +32,6 @@ class NODETREE_SOURCE_LIB_OT_material_from_library(Operator):
             context=context,
             material_alias=material_alias
         )
-        subtype, subtype2 = NodeTreeSourceContext.context(context=context)
-        if subtype == 'ShaderNodeTree' and subtype2 == 'OBJECT':
-            context.active_object.active_material = bpy.data.materials[-1]
-        elif subtype == 'ShaderNodeTree' and subtype2 == 'WORLD':
-            context.scene.world = bpy.data.worlds[-1]
         return {'FINISHED'}
 
     @classmethod

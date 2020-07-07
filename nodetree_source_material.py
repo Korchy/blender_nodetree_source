@@ -56,7 +56,9 @@ class Material:
         # make created material active
         source = '\n' + '# TO ACTIVE' + '\n'
         if material_type == 'OBJECT':
-            source += 'bpy.context.active_object.active_material = ' + material_name + '\n'
+            source += 'selected_objects = (obj for obj in bpy.data.objects if obj.select_get())' + '\n'
+            source += 'for obj in selected_objects:' + '\n'
+            source += ('    ' * 1) + 'obj.active_material = ' + material_name + '\n'
         elif material_type == 'WORLD':
             source += 'bpy.context.scene.world = ' + material_name + '\n'
         return source
