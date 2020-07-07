@@ -15,7 +15,7 @@ class NODETREE_SOURCE_preferences(AddonPreferences):
     export_path: StringProperty(
         name='Export Path',
         subtype='DIR_PATH',
-        default='D:/'
+        default=''
     )
 
     def draw(self, context):

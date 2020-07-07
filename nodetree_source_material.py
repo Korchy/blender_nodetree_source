@@ -16,15 +16,20 @@ class Material:
         source = '# MATERIAL' + '\n'
         active_material_object, material_type = cls.active_material_object(context=context)
         if active_material_object:
+            material_name = cls.material_alias(material=active_material_object)
             source += cls._create_new_source(
                 context=context,
                 material_type=material_type,
-                material_name=cls.material_alias(material=active_material_object)
+                material_name=material_name
             ) + '\n'
             source += NodeTree.to_source(
                 owner=active_material_object,
                 node_tree=active_material_object.node_tree,
                 parent_expr='node_tree'
+            )
+            source += cls._source_to_active(
+                material_type=material_type,
+                material_name=material_name
             )
         return source
 
@@ -44,6 +49,16 @@ class Material:
             source = 'node_tree0 = bpy.context.scene.node_tree' + '\n'
             source += 'bpy.context.scene.use_nodes = True' + '\n'
         source += NodeTree.clear_source(parent_expr='node_tree0')
+        return source
+
+    @staticmethod
+    def _source_to_active(material_type, material_name):
+        # make created material active
+        source = '\n' + '# TO ACTIVE' + '\n'
+        if material_type == 'OBJECT':
+            source += 'bpy.context.active_object.active_material = ' + material_name + '\n'
+        elif material_type == 'WORLD':
+            source += 'bpy.context.scene.world = ' + material_name + '\n'
         return source
 
     @classmethod
