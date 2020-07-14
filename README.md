@@ -23,7 +23,7 @@ The "Material", "World" and "Compositing" nodes are supported.
 
 Current add-on version
 -
-1.0.0.
+1.0.1.
 
 Blender versions
 -
@@ -40,5 +40,8 @@ Installation
 
 Version history
 -
+1.0.1.
+- Fixed bug with groups in compositor
+
 1.0.0.
 - This release.

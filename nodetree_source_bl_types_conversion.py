@@ -167,6 +167,10 @@ class BLShaderNodeTree:
         return ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.node_groups.get(\'' + value.name + '\')'
 
 
+class BLCompositorNodeTree(BLShaderNodeTree):
+    pass
+
+
 class BLNodeFrame:
 
     @classmethod
