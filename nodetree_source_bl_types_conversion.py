@@ -187,7 +187,8 @@ class BLCurveMapping:
         return BlTypesConversion.source_from_complex_type(
             value=value,
             complex_attributes=['curves'],
-            parent_expr=parent_expr
+            parent_expr=parent_expr,
+            deep=deep
         )
 
 
@@ -199,7 +200,8 @@ class BLCurveMap:
         return BlTypesConversion.source_from_complex_type(
             value=value,
             complex_attributes=['points'],
-            parent_expr=parent_expr
+            parent_expr=parent_expr,
+            deep=deep
         )
 
 
@@ -208,10 +210,11 @@ class BLCurveMapPoint:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
-        source = 'if ' + parent_expr[-2:][:1] + ' >= len(' + parent_expr[:-3] + '):' + '\n'
-        source += '    ' + parent_expr[:-3] + '.new(' + str(value.location.x) + ', ' + str(value.location.y) + ')' + '\n'
+        source = ('    ' * deep) + 'if ' + parent_expr.strip()[-2:][:1] + ' >= len(' + parent_expr.strip()[:-3] + '):' + '\n'
+        source += ('    ' * (deep + 1)) + parent_expr.strip()[:-3] + '.new(' + str(value.location.x) + ', ' + str(value.location.y) + ')' + '\n'
         source += BlTypesConversion.source_from_complex_type(
             value=value,
-            parent_expr=parent_expr
+            parent_expr=parent_expr,
+            deep=deep
         )
         return source

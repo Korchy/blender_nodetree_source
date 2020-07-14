@@ -42,6 +42,7 @@ Version history
 -
 1.0.1.
 - Fixed bug with groups in compositor
+- Fixed bug with tabulation in Mapping nodes sources
 
 1.0.0.
 - This release.
