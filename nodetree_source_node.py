@@ -18,7 +18,7 @@ class Node:
         # attributes
         # don't process
         excluded_attributes = [
-            'dimensions', 'height', 'hide', 'inputs', 'internal_links', 'node_tree', 'outputs', 'rna_type', 'select',
+            'dimensions', 'height', 'inputs', 'internal_links', 'node_tree', 'outputs', 'rna_type', 'select',
             'shading_compatibility', 'show_options', 'show_preview', 'show_texture', 'type', 'width_hidden'
         ]
         # process first - because they influence on other attributes
