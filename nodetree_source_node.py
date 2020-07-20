@@ -24,7 +24,7 @@ class Node:
         # process first - because they influence on other attributes
         preordered_attributes = [attr for attr in ['mode', 'node_tree', 'parent'] if hasattr(node, attr)]
         # this attributes - complex
-        complex_attributes = ['mapping']
+        complex_attributes = ['color_ramp', 'mapping']
         # get source
         source += BlTypesConversion.source_from_complex_type(
             value=node,

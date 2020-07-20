@@ -218,3 +218,32 @@ class BLCurveMapPoint:
             deep=deep
         )
         return source
+
+
+class BLColorRamp:
+    # color ramp
+
+    @classmethod
+    def to_source(cls, value, parent_expr='', deep=0):
+        # complex attributes - can be readonly but must be processed inside themselves
+        return BlTypesConversion.source_from_complex_type(
+            value=value,
+            complex_attributes=['elements'],
+            parent_expr=parent_expr,
+            deep=deep
+        )
+
+
+class BLColorRampElement:
+    # color ramp element
+
+    @classmethod
+    def to_source(cls, value, parent_expr='', deep=0):
+        source = ('    ' * deep) + 'if ' + parent_expr.strip()[-2:][:1] + ' >= len(' + parent_expr.strip()[:-3] + '):' + '\n'
+        source += ('    ' * (deep + 1)) + parent_expr.strip()[:-3] + '.new(' + str(value.position) + ')' + '\n'
+        source += BlTypesConversion.source_from_complex_type(
+            value=value,
+            parent_expr=parent_expr,
+            deep=deep
+        )
+        return source

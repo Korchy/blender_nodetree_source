@@ -44,6 +44,7 @@ Version history
 - Fixed bug with groups in compositor
 - Fixed bug with tabulation in Mapping nodes sources
 - Add "hide" node property to processing
+- Fixed ColorRamp node
 
 1.0.0.
 - This release.
