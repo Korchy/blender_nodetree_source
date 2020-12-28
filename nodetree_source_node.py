@@ -31,7 +31,7 @@ class Node:
             excluded_attributes=excluded_attributes,
             preordered_attributes=preordered_attributes,
             complex_attributes=complex_attributes,
-            parent_expr=('    ' * deep) + node_alias,
+            parent_expr=node_alias,
             deep=deep
         )
         # inputs
