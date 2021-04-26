@@ -8,6 +8,7 @@ import os
 from shutil import copyfile, copytree, make_archive
 import tempfile
 from .nodetree_source_material import Material
+from .nodetree_source_light import Light
 from .nodetree_source_library import NodeTreeSourceLibrary
 from .nodetree_source_file_manager import FileManager
 import bpy
@@ -79,19 +80,28 @@ class NodeTreeSource:
     @classmethod
     def material_to_text(cls, context, scene_data):
         # show material as source in TEXT_EDITOR window
-        material = Material.active_material_object(context=context)[0]
-        source_file_alias = Material.material_alias(material=material)
-        # header
-        external_items_list = Material.external_items(
-            material=material
-        )
-        source = cls._header(has_external=bool(external_items_list), material_name=source_file_alias)
-        # material data
-        source += Material.to_source(context=context, scene_data=scene_data)
-        # create text object with source
-        text_block = scene_data.texts.get(material.name)
-        if not text_block:
-            text_block = scene_data.texts.new(name=material.name)
+
+        if context.active_object.type == 'LIGHT':
+            source = Light.to_source(context)
+            text_block = scene_data.texts.get(bpy.context.active_object.data.name + ' nodes.py')
+            if not text_block:
+                text_block = scene_data.texts.new(bpy.context.active_object.data.name + ' nodes.py')
+        else:
+            material = Material.active_material_object(context=context)[0]
+            source_file_alias = Material.material_alias(material=material)
+            # header
+            external_items_list = Material.external_items(
+                material=material
+            )
+            source = cls._header(has_external=bool(external_items_list), material_name=source_file_alias)
+            # material data
+            source += Material.to_source(context=context, scene_data=scene_data)
+            # create text object with source
+            text_block = scene_data.texts.get(material.name)
+            if not text_block:
+                text_block = scene_data.texts.new(name=material.name)
+        
+        
         text_block.from_string(string=source)
         text_block.select_set(line_start=0, char_start=0, line_end=0, char_end=0)
         text_block.current_line_index = 0

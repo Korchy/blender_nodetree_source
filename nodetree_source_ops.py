@@ -27,6 +27,7 @@ class NODETREE_SOURCE_OT_material_to_text(Operator):
     @classmethod
     def poll(cls, context):
         subtype, subtype2 = NodeTreeSourceContext.context(context=context)
+
         if subtype == 'ShaderNodeTree'\
                 and subtype2 == 'OBJECT'\
                 and context.active_object\
@@ -37,6 +38,12 @@ class NODETREE_SOURCE_OT_material_to_text(Operator):
                 and subtype2 == 'WORLD'\
                 and context.scene.world\
                 and context.scene.world.use_nodes:
+            return True
+        elif subtype == 'ShaderNodeTree'\
+                and subtype2 == 'OBJECT'\
+                and context.active_object\
+                and context.active_object.type == 'LIGHT'\
+                and context.active_object.data.use_nodes:
             return True
         elif subtype == 'CompositorNodeTree'\
                 and context.scene.use_nodes:
