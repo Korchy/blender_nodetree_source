@@ -257,7 +257,7 @@ class BLNodeFrame:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
-        return ('    ' * deep) + ((parent_expr + ' = ') if parent_expr else '') + 'node_tree' + str(deep) + '.nodes.get(\'' + value.name + '\')'
+        return ('    ' * deep) + ((parent_expr + ' = ') if parent_expr else '') + 'node_tree' + str(deep - 1) + '.nodes.get(\'' + value.name + '\')'
 
 
 class BLCurveMapping:
