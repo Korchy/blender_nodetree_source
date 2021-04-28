@@ -11,6 +11,7 @@ from .nodetree_source_material import Material
 from .nodetree_source_light import Light
 from .nodetree_source_library import NodeTreeSourceLibrary
 from .nodetree_source_file_manager import FileManager
+from .nodetree_source_context import NodeTreeSourceContext
 import bpy
 
 
@@ -79,9 +80,13 @@ class NodeTreeSource:
 
     @classmethod
     def material_to_text(cls, context, scene_data):
-        # show material as source in TEXT_EDITOR window
-
-        if context.active_object.type == 'LIGHT':
+        
+        subtype, subtype2 = NodeTreeSourceContext.context(context=context)
+        if subtype == 'ShaderNodeTree'\
+                and subtype2 == 'OBJECT'\
+                and context.active_object\
+                and context.active_object.type == 'LIGHT'\
+                and context.active_object.data.use_nodes:
             source = Light.to_source(context)
             text_block = scene_data.texts.get(bpy.context.active_object.data.name + ' nodes.py')
             if not text_block:
