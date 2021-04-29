@@ -9,6 +9,7 @@
 
 import sys
 from mathutils import Vector, Color
+import re
 
 
 class BlTypesConversion:
@@ -252,6 +253,44 @@ class BLShaderNodeTree:
 class BLCompositorNodeTree(BLShaderNodeTree):
     pass
 
+
+class BLImageFormatSettings:
+
+    @classmethod 
+    def to_source(cls, value, parent_expr='', deep=0):
+
+        return BlTypesConversion.source_from_complex_type(
+            value=value,
+            parent_expr=parent_expr,
+            deep=deep
+        )
+
+class BLNodeOutputFileSlotFile:
+     
+    @classmethod 
+    def to_source(cls, value, parent_expr='', deep=0):
+        idx_match = re.search('\[(\d+)\]', parent_expr)
+        idx = idx_match.group(1)
+        parent_expr_reduced = parent_expr[:-(len(idx)+2)]
+        source = ''
+        if idx_match and int(idx) > 0:
+            source = ('    ' * deep) + parent_expr_reduced + '.new(\'NodeOutputFileSlotFile\')' + '\n'
+
+        return source + BlTypesConversion.source_from_complex_type(
+            value=value,
+            complex_attributes=['format'],
+            parent_expr=parent_expr,
+            deep=deep
+        )
+
+class BLNodeOutputFileSlotLayer:
+    @classmethod 
+    def to_source(cls, value, parent_expr='', deep=0):
+        return BlTypesConversion.source_from_complex_type(
+            value=value,
+            parent_expr=parent_expr,
+            deep=deep
+        )
 
 class BLNodeFrame:
 
