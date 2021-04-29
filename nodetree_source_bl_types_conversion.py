@@ -261,6 +261,7 @@ class BLImageFormatSettings:
 
         return BlTypesConversion.source_from_complex_type(
             value=value,
+            preordered_attributes=['file_format'],
             parent_expr=parent_expr,
             deep=deep
         )
@@ -397,3 +398,95 @@ class BLColorRampElement:
             deep=deep
         )
         return source
+
+
+class BLNodeSocket:
+
+
+    @classmethod
+    def to_source(cls, value, parent_expr='', deep=0):
+        print("A socket.")
+        return BlTypesConversion.source_from_complex_type(
+            value=value,
+            parent_expr=parent_expr,
+            deep=deep
+        )
+
+
+class BLNodeSocketBool(BLNodeSocket):
+    pass
+
+class BLNodeSocketCollection(BLNodeSocket):
+    pass
+
+class BLNodeSocketColor(BLNodeSocket):
+    pass
+
+class BLNodeSocketFloat(BLNodeSocket):
+    pass
+
+class BLNodeSocketFloatAngle(BLNodeSocket):
+    pass
+
+class BLNodeSocketFloatFactor(BLNodeSocket):
+    pass
+
+class BLNodeSocketFloatPercentage(BLNodeSocket):
+    pass
+
+class BLNodeSocketFloatTime(BLNodeSocket):
+    pass
+
+class BLNodeSocketFloatUnsigned(BLNodeSocket):
+    pass
+
+class BLNodeSocketGeometry(BLNodeSocket):
+    pass
+
+class BLNodeSocketImage(BLNodeSocket):
+    pass
+
+class BLNodeSocketInt(BLNodeSocket):
+    pass
+
+class BLNodeSocketIntFactor(BLNodeSocket):
+    pass
+
+class BLNodeSocketIntPercentage(BLNodeSocket):
+    pass
+
+class BLNodeSocketIntUnsigned(BLNodeSocket):
+    pass
+
+class BLNodeSocketObject(BLNodeSocket):
+    pass
+
+class BLNodeSocketShader(BLNodeSocket):
+    pass
+
+class BLNodeSocketString(BLNodeSocket):
+    pass
+
+class BLNodeSocketVector(BLNodeSocket):
+    pass
+
+class BLNodeSocketVectorAcceleration(BLNodeSocket):
+    pass
+
+class BLNodeSocketVectorDirection(BLNodeSocket):
+    pass
+
+class BLNodeSocketVectorEuler(BLNodeSocket):
+    pass
+
+class BLNodeSocketVectorTranslation(BLNodeSocket):
+    pass
+
+class BLNodeSocketVectorVelocity(BLNodeSocket):
+    pass
+
+class BLNodeSocketVectorXYZ(BLNodeSocket):
+    pass
+
+class BLNodeSocketVirtual(BLNodeSocket):
+    pass

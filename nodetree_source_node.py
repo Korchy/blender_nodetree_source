@@ -41,14 +41,29 @@ class Node:
                     if hasattr(c_input, 'default_value'):
                         input_value_str = BlTypesConversion.source_by_type(item=c_input, value=c_input.default_value)
                         if input_value_str is not None:
-                            source += ('    ' * deep) + node_alias + '.inputs[' + str(index) + '].default_value = ' + input_value_str + '\n'
+                            # source += ('    ' * deep) + node_alias + '.inputs[' + str(index) + '].default_value = ' + input_value_str + '\n'
+                            source += BlTypesConversion.source_from_complex_type(
+                                value=node,
+                                # excluded_attributes=excluded_attributes,
+                                # preordered_attributes=preordered_attributes,
+                                # complex_attributes=complex_attributes,
+                                parent_expr=node_alias,
+                                deep=deep
+                            ) 
             # outputs
             if node.outputs:
+                source += ('    ' * deep) + 'try:' + '\n'
+                deep += 1
+                source += ('    ' * deep) + 'pass' + '\n' # In case no output has a default value.
                 for index, c_output in enumerate(node.outputs):
                     if hasattr(c_output, 'default_value'):
                         output_value_str = BlTypesConversion.source_by_type(item=c_output, value=c_output.default_value)
                         if output_value_str is not None:
                             source += ('    ' * deep) + node_alias + '.outputs[' + str(index) + '].default_value = ' + output_value_str + '\n'
+                deep -= 1
+                source += ('    ' * deep) + 'except:' + '\n'
+                source += ('    ' * (deep+1)) + 'print("Some kind of error with the outputs of {:s}.")'.format(node.name) + '\n'
+
         return source
 
     @staticmethod
