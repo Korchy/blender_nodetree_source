@@ -44,6 +44,12 @@ class NODETREE_SOURCE_LIB_OT_material_from_library(Operator):
         elif subtype == 'ShaderNodeTree'\
                 and subtype2 == 'WORLD':
             return True
+        elif subtype == 'ShaderNodeTree'\
+                and subtype2 == 'LIGHT'\
+                and context.scene.render.engine == 'CYCLES'\
+                and context.active_object\
+                and context.active_object.type == 'LIGHT':
+            return True
         elif subtype == 'CompositorNodeTree'\
                 and context.scene.use_nodes:
             return True

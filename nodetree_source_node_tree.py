@@ -72,10 +72,10 @@ class NodeTree:
         return source
 
     @staticmethod
-    def clear_source(parent_expr=''):
+    def clear_source(parent_expr='', deep=0):
         # source for clear node tree
-        source = 'for node in ' + parent_expr + '.nodes:' + '\n'
-        source += '    ' + parent_expr + '.nodes.remove(node)' + '\n'
+        source = ('    ' * deep) + 'for node in ' + parent_expr + '.nodes:' + '\n'
+        source += ('    ' * (deep + 1)) + parent_expr + '.nodes.remove(node)' + '\n'
         return source
 
     @classmethod

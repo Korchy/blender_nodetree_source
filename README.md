@@ -23,11 +23,11 @@ The "Material", "World" and "Compositing" nodes are supported.
 
 Current add-on version
 -
-1.0.2.
+1.1.0.
 
 Blender versions
 -
-2.83, 2.90, 2.91
+2.83, 2.90, 2.91, 2.92, 2.93, 3.0
 
 Location and call
 -
@@ -40,6 +40,9 @@ Installation
 
 Version history
 -
+1.1.0.
+- Added "Light" nodes support
+
 1.0.2.
 - Some improvements in bl_types conversion and with indents (deep)
 

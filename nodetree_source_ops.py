@@ -38,6 +38,11 @@ class NODETREE_SOURCE_OT_material_to_text(Operator):
                 and context.scene.world\
                 and context.scene.world.use_nodes:
             return True
+        elif subtype == 'ShaderNodeTree'\
+                and subtype2 == 'LIGHT'\
+                and context.scene.render.engine == 'CYCLES'\
+                and context.active_object.data.use_nodes:
+            return True
         elif subtype == 'CompositorNodeTree'\
                 and context.scene.use_nodes:
             return True
@@ -71,6 +76,11 @@ class NODETREE_SOURCE_OT_material_to_library(Operator):
                 and subtype2 == 'WORLD'\
                 and context.scene.world\
                 and context.scene.world.use_nodes:
+            return True
+        elif subtype == 'ShaderNodeTree'\
+                and subtype2 == 'LIGHT'\
+                and context.scene.render.engine == 'CYCLES'\
+                and context.active_object.data.use_nodes:
             return True
         elif subtype == 'CompositorNodeTree'\
                 and context.scene.use_nodes:

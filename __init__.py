@@ -18,7 +18,7 @@ bl_info = {
     'name': 'NodeTree Source',
     'category': 'All',
     'author': 'Nikita Akimov',
-    'version': (1, 0, 2),
+    'version': (1, 1, 0),
     'blender': (2, 83, 0),
     'location': 'N-Panel > NodeTree Source',
     'wiki_url': 'https://b3d.interplanety.org/en/blender-add-on-nodetree-source/',

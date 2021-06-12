@@ -24,6 +24,9 @@ class NodeTreeSourceContext:
     def _get_subtype2(context):
         # material subtype2
         if context.area and context.space_data.type == 'NODE_EDITOR':
-            return context.space_data.shader_type
+            if context.object.type == 'LIGHT':
+                return 'LIGHT'
+            else:
+                return context.space_data.shader_type
         else:
             return 'OBJECT'
