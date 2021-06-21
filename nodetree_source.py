@@ -79,7 +79,7 @@ class NodeTreeSource:
     @classmethod
     def material_to_text(cls, context, scene_data):
         # show material as source in TEXT_EDITOR window
-        material = Material.active_material_object(context=context)[0]
+        material = Material.active_material_object(context=context)
         source_file_alias = Material.material_alias(material=material)
         # header
         external_items_list = Material.external_items(

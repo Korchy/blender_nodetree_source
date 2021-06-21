@@ -34,21 +34,30 @@ class Node:
             parent_expr=node_alias,
             deep=deep
         )
-        # inputs
+        # inputs, outputs
         if node.type not in ['REROUTE']:
+            # inputs
             if node.inputs:
                 for index, c_input in enumerate(node.inputs):
                     if hasattr(c_input, 'default_value'):
-                        input_value_str = BlTypesConversion.source_by_type(item=c_input, value=c_input.default_value)
-                        if input_value_str is not None:
-                            source += ('    ' * deep) + node_alias + '.inputs[' + str(index) + '].default_value = ' + input_value_str + '\n'
+                        excluded_attributes = [attr for attr in ['type', 'link_limit'] if hasattr(c_input, attr)]
+                        source += BlTypesConversion.source_from_complex_type(
+                            value=c_input,
+                            excluded_attributes=excluded_attributes,
+                            parent_expr=node_alias + '.inputs[' + str(index) + ']',
+                            deep=deep
+                        )
             # outputs
             if node.outputs:
                 for index, c_output in enumerate(node.outputs):
                     if hasattr(c_output, 'default_value'):
-                        output_value_str = BlTypesConversion.source_by_type(item=c_output, value=c_output.default_value)
-                        if output_value_str is not None:
-                            source += ('    ' * deep) + node_alias + '.outputs[' + str(index) + '].default_value = ' + output_value_str + '\n'
+                        excluded_attributes = [attr for attr in ['type', 'link_limit'] if hasattr(c_output, attr)]
+                        source += BlTypesConversion.source_from_complex_type(
+                            value=c_output,
+                            excluded_attributes=excluded_attributes,
+                            parent_expr=node_alias + '.outputs[' + str(index) + ']',
+                            deep=deep
+                        )
         return source
 
     @staticmethod

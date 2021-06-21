@@ -38,7 +38,8 @@ class BlTypesConversion:
             return None
 
     @staticmethod
-    def source_from_complex_type(value, excluded_attributes: list = None, preordered_attributes: list = None, complex_attributes: list = None, parent_expr='', deep=0):
+    def source_from_complex_type(value, excluded_attributes: list = None, preordered_attributes: list = None,
+                                 complex_attributes: list = None, parent_expr='', deep=0):
         # excluded attributes - don't process them (ex: type, select)
         excluded_attributes = excluded_attributes if excluded_attributes is not None else []
         # preordered attributes - need to be processed first because when changed - change another attributes (ex: mode)
@@ -60,8 +61,9 @@ class BlTypesConversion:
             and attr not in excluded_attributes
             and attr not in preordered_attributes  # don't add preorderd attributes, added first manually
             and not callable(getattr(value, attr))
-            and getattr(value, attr) is not None    # don't add attributes == None
-            and not (isinstance(getattr(value, attr), str) and not getattr(value, attr))  # don't add attributes == '' (empty string)
+            and getattr(value, attr) is not None  # don't add attributes == None
+            and not (isinstance(getattr(value, attr), str) and not getattr(value,
+                                                                           attr))  # don't add attributes == '' (empty string)
             and (not value.is_property_readonly(attr) or attr in complex_attributes)
         ]
         source = ''
@@ -138,14 +140,16 @@ class BLScene:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
-        return ('    ' * deep) + ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.scenes.get(\'' + value.name + '\')'
+        return ('    ' * deep) + \
+               ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.scenes.get(\'' + value.name + '\')'
 
 
 class BLObject:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
-        return ('    ' * deep) + ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.objects.get(\'' + value.name + '\')'
+        return ('    ' * deep) + \
+               ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.objects.get(\'' + value.name + '\')'
 
 
 class BLImage:
@@ -153,9 +157,12 @@ class BLImage:
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
         source = ('    ' * deep) + 'if \'' + value.name + '\' not in bpy.data.images:' + '\n'
-        source += ('    ' * (deep + 1)) + 'if os.path.exists(os.path.join(external_items_dir, \'' + value.name + '\')):' + '\n'
-        source += ('    ' * (deep + 2)) + 'bpy.data.images.load(os.path.join(external_items_dir, \'' + value.name + '\'))' + '\n'
-        source += ('    ' * deep) + ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.images.get(\'' + value.name + '\')'
+        source += ('    ' * (
+                    deep + 1)) + 'if os.path.exists(os.path.join(external_items_dir, \'' + value.name + '\')):' + '\n'
+        source += ('    ' * (
+                    deep + 2)) + 'bpy.data.images.load(os.path.join(external_items_dir, \'' + value.name + '\'))' + '\n'
+        source += ('    ' * deep) + (
+            (parent_expr + ' = ') if parent_expr else '') + 'bpy.data.images.get(\'' + value.name + '\')'
         return source
 
 
@@ -165,7 +172,8 @@ class BLImageTexture:
     def to_source(cls, value, parent_expr='', deep=0):
         source = ('    ' * deep) + 'image_texture = bpy.data.textures.get(\'' + value.name + '\')' + '\n'
         source += ('    ' * deep) + 'if not image_texture:' + '\n'
-        source += ('    ' * (deep + 1)) + 'image_texture = bpy.data.textures.new(name=\'' + value.name + '\', type=\'' + value.type + '\')' + '\n'
+        source += ('    ' * (deep + 1)) + \
+            'image_texture = bpy.data.textures.new(name=\'' + value.name + '\', type=\'' + value.type + '\')' + '\n'
         source += BlTypesConversion.source_from_complex_type(
             value=value,
             preordered_attributes=['use_color_ramp'],
@@ -222,9 +230,12 @@ class BLCacheFile:
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
         source = ('    ' * deep) + 'if \'' + value.name + '\' not in bpy.data.cache_files:' + '\n'
-        source += ('    ' * (deep + 1)) + 'if os.path.exists(os.path.join(external_items_dir, \'' + value.name + '\')):' + '\n'
-        source += ('    ' * (deep + 2)) + 'bpy.ops.cachefile.open(os.path.join(external_items_dir, \'' + value.name + '\'))' + '\n'
-        source += ('    ' * deep) + ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.cache_files.get(\'' + value.name + '\')'
+        source += ('    ' * (deep + 1)) + \
+            'if os.path.exists(os.path.join(external_items_dir, \'' + value.name + '\')):' + '\n'
+        source += ('    ' * (deep + 2)) + \
+            'bpy.ops.cachefile.open(os.path.join(external_items_dir, \'' + value.name + '\'))' + '\n'
+        source += ('    ' * deep) + \
+            ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.cache_files.get(\'' + value.name + '\')'
         return source
 
 
@@ -232,24 +243,32 @@ class BLText:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
-        return ('    ' * deep) + ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.texts.get(\'' + value.name + '\')'
+        return ('    ' * deep) + \
+               ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.texts.get(\'' + value.name + '\')'
 
 
 class BLParticleSystem:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
-        return ('    ' * deep) + ((parent_expr + ' = ') if parent_expr else '') + 'bpy.context.active_object.particle_systems.get(\'' + value.name + '\')'
+        return ('    ' * deep) + \
+               ((parent_expr + ' = ') if parent_expr else '') \
+               + 'bpy.context.active_object.particle_systems.get(\'' + value.name + '\')'
 
 
 class BLShaderNodeTree:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
-        return ('    ' * deep) + ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.node_groups.get(\'' + value.name + '\')'
+        return ('    ' * deep) + \
+               ((parent_expr + ' = ') if parent_expr else '') + 'bpy.data.node_groups.get(\'' + value.name + '\')'
 
 
 class BLCompositorNodeTree(BLShaderNodeTree):
+    pass
+
+
+class BLGeometryNodeTree(BLShaderNodeTree):
     pass
 
 
@@ -257,7 +276,9 @@ class BLNodeFrame:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
-        return ('    ' * deep) + ((parent_expr + ' = ') if parent_expr else '') + 'node_tree' + str(deep) + '.nodes.get(\'' + value.name + '\')'
+        return ('    ' * deep) + \
+               ((parent_expr + ' = ') if parent_expr else '') \
+               + 'node_tree' + str(deep) + '.nodes.get(\'' + value.name + '\')'
 
 
 class BLCurveMapping:
@@ -292,8 +313,10 @@ class BLCurveMapPoint:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
-        source = ('    ' * deep) + 'if ' + parent_expr.strip()[-2:][:1] + ' >= len(' + parent_expr.strip()[:-3] + '):' + '\n'
-        source += ('    ' * (deep + 1)) + parent_expr.strip()[:-3] + '.new(' + str(value.location.x) + ', ' + str(value.location.y) + ')' + '\n'
+        source = ('    ' * deep) + \
+            'if ' + parent_expr.strip()[-2:][:1] + ' >= len(' + parent_expr.strip()[:-3] + '):' + '\n'
+        source += ('    ' * (deep + 1)) + \
+            parent_expr.strip()[:-3] + '.new(' + str(value.location.x) + ', ' + str(value.location.y) + ')' + '\n'
         source += BlTypesConversion.source_from_complex_type(
             value=value,
             parent_expr=parent_expr,
@@ -350,8 +373,10 @@ class BLColorRampElement:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
-        source = ('    ' * deep) + 'if ' + parent_expr.strip()[-2:][:1] + ' >= len(' + parent_expr.strip()[:-3] + '):' + '\n'
-        source += ('    ' * (deep + 1)) + parent_expr.strip()[:-3] + '.new(' + str(value.position) + ')' + '\n'
+        source = ('    ' * deep) + \
+                 'if ' + parent_expr.strip()[-2:][:1] + ' >= len(' + parent_expr.strip()[:-3] + '):' + '\n'
+        source += ('    ' * (deep + 1)) + \
+                  parent_expr.strip()[:-3] + '.new(' + str(value.position) + ')' + '\n'
         source += BlTypesConversion.source_from_complex_type(
             value=value,
             parent_expr=parent_expr,
