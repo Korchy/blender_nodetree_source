@@ -19,7 +19,7 @@ Important
 -
 The local materials library is stored in the add-on directory. If you need to temporarily remove or reinstall the add-on, be sure to back up the library in a separate place on the disk first. After reinstalling the addon, the library can be restored simply by copying it to the "nodetree_source_library" directory of the add-on.
 
-The "Material", "World" and "Compositing" nodes are supported.
+The "Material", "World", "Geometry Nodes", "Lights" and "Compositing" nodes are supported.
 
 Current add-on version
 -
