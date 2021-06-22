@@ -54,10 +54,7 @@ class NODETREE_SOURCE_LIB_OT_material_from_library(Operator):
                 and context.scene.use_nodes:
             return True
         elif subtype == 'GeometryNodeTree' \
-                and context.active_object \
-                and context.active_object.modifiers \
-                and context.active_object.modifiers.active \
-                and context.active_object.modifiers.active.type == 'NODES':
+                and context.active_object:
             return True
         else:
             return False
