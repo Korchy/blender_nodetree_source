@@ -96,11 +96,11 @@ class Material:
             source += ('    ' * deep) + 'bpy.context.scene.world = ' + material_name + '\n'
         elif subtype == 'GeometryNodeTree':
             deep = 0
-            source += ('    ' * deep) + 'selected_objects = (obj for obj in bpy.data.objects if obj.select_get())' \
-                      + '\n'
+            source += ('    ' * deep) + \
+                'selected_objects = (obj for obj in bpy.data.objects if obj.select_get())' + '\n'
             source += ('    ' * deep) + 'for obj in selected_objects:' + '\n'
-            source += ('    ' * (deep + 1)) + 'modifier = obj.modifiers.new(name=\'' + material_name + '\', type=\'NODES\')' \
-                      + '\n'
+            source += ('    ' * (deep + 1)) + \
+                'modifier = obj.modifiers.new(name=\'' + material_name + '\', type=\'NODES\')' + '\n'
             source += ('    ' * (deep + 1)) + 'modifier.node_group = node_tree' + str(deep + 1) + '\n'
         elif subtype == 'CompositorNodeTree':
             # everything made in _create_new_source

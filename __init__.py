@@ -18,8 +18,8 @@ bl_info = {
     'name': 'NodeTree Source',
     'category': 'All',
     'author': 'Nikita Akimov',
-    'version': (1, 1, 0),
-    'blender': (2, 83, 0),
+    'version': (1, 2, 0),
+    'blender': (2, 93, 0),
     'location': 'N-Panel > NodeTree Source',
     'wiki_url': 'https://b3d.interplanety.org/en/blender-add-on-nodetree-source/',
     'tracker_url': 'https://b3d.interplanety.org/en/blender-add-on-nodetree-source/',
@@ -37,7 +37,8 @@ def register():
         nodetree_source_library_ops.register()
         nodetree_source_library_panel.register()
     else:
-        print('It seems you are trying to use the dev version of the ' + bl_info['name'] + ' add-on. It may work not properly. Please download and use the release version!')
+        print('It seems you are trying to use the dev version of the ' + bl_info['name'] +
+              ' add-on. It may work not properly. Please download and use the release version!')
 
 
 def unregister():

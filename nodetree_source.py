@@ -45,7 +45,7 @@ class NodeTreeSource:
     def material_to_library(cls, context, scene_data):
         # add material to source library
         source = ''
-        material = Material.active_material_object(context=context)[0]
+        material = Material.active_material_object(context=context)
         # save source to file
         library_path = NodeTreeSourceLibrary.library_path()
         source_file_alias = Material.material_alias(material=material)
@@ -61,7 +61,7 @@ class NodeTreeSource:
             )
             source += cls._header(has_external=bool(external_items_list), material_name=source_file_alias)
             # material data
-            source += Material.to_source(context=context, scene_data=scene_data)
+            source += Material.to_source(context=context)
             # write to file
             with open(file=source_file_path, mode='w', encoding='utf8') as source_file:
                 source_file.write(source)

@@ -27,7 +27,6 @@ class NODETREE_SOURCE_OT_material_to_text(Operator):
     @classmethod
     def poll(cls, context):
         subtype, subtype2 = NodeTreeSourceContext.context(context=context)
-        print(subtype, subtype2)
         if subtype == 'ShaderNodeTree'\
                 and subtype2 == 'OBJECT'\
                 and context.active_object\
@@ -39,9 +38,10 @@ class NODETREE_SOURCE_OT_material_to_text(Operator):
                 and context.scene.world\
                 and context.scene.world.use_nodes:
             return True
-        elif subtype == 'ShaderNodeTree'\
-                and subtype2 == 'LIGHT'\
-                and context.scene.render.engine == 'CYCLES'\
+        elif subtype == 'ShaderNodeTree' \
+                and subtype2 == 'LIGHT' \
+                and context.scene.render.engine == 'CYCLES' \
+                and context.active_object \
                 and context.active_object.data.use_nodes:
             return True
         elif subtype == 'CompositorNodeTree'\
@@ -87,10 +87,17 @@ class NODETREE_SOURCE_OT_material_to_library(Operator):
         elif subtype == 'ShaderNodeTree'\
                 and subtype2 == 'LIGHT'\
                 and context.scene.render.engine == 'CYCLES'\
+                and context.active_object\
                 and context.active_object.data.use_nodes:
             return True
         elif subtype == 'CompositorNodeTree'\
                 and context.scene.use_nodes:
+            return True
+        elif subtype == 'GeometryNodeTree' \
+                and context.active_object \
+                and context.active_object.modifiers \
+                and context.active_object.modifiers.active \
+                and context.active_object.modifiers.active.type == 'NODES':
             return True
         else:
             return False
