@@ -15,6 +15,8 @@ class NodeTree:
     def to_source(cls, node_tree, parent_expr='', deep=0, processed_node_groups=None):
         # get node tree source
         source = ''
+        # clear node tree
+        source += cls.clear_source(parent_expr=parent_expr, deep=deep)
         # list to control node groups - not to build the same node group more than once
         processed_node_groups = [] if processed_node_groups is None else processed_node_groups
         # inputs
@@ -78,8 +80,8 @@ class NodeTree:
     @staticmethod
     def clear_source(parent_expr='', deep=0):
         # source for clear node tree
-        source = ('    ' * deep) + 'for node in ' + parent_expr + '.nodes:' + '\n'
-        source += ('    ' * (deep + 1)) + parent_expr + '.nodes.remove(node)' + '\n'
+        source = ('    ' * deep) + 'for node in ' + parent_expr + str(deep) + '.nodes:' + '\n'
+        source += ('    ' * (deep + 1)) + parent_expr + str(deep) + '.nodes.remove(node)' + '\n'
         return source
 
     @classmethod

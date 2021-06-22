@@ -87,7 +87,7 @@ class NodeTreeSource:
         )
         source = cls._header(has_external=bool(external_items_list), material_name=source_file_alias)
         # material data
-        source += Material.to_source(context=context, scene_data=scene_data)
+        source += Material.to_source(context=context)
         # create text object with source
         text_block = scene_data.texts.get(material.name)
         if not text_block:
