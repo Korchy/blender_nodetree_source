@@ -7,6 +7,7 @@
 # Blender types conversion
 # Blender types with prefix BL
 
+import re
 import sys
 from mathutils import Vector, Color
 
@@ -373,10 +374,10 @@ class BLColorRampElement:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
-        source = ('    ' * deep) + \
-                 'if ' + parent_expr.strip()[-2:][:1] + ' >= len(' + parent_expr.strip()[:-3] + '):' + '\n'
-        source += ('    ' * (deep + 1)) + \
-                  parent_expr.strip()[:-3] + '.new(' + str(value.position) + ')' + '\n'
+        current_element = re.search('\[([\d]+)\]', parent_expr).group(1)
+        elements = re.search('(.+)\[',parent_expr).group(1)
+        source = ('    ' * deep) + 'if ' + current_element + ' >= len(' + elements + '):' + '\n'
+        source += ('    ' * (deep + 1)) + elements + '.new(' + str(value.position) + ')' + '\n'
         source += BlTypesConversion.source_from_complex_type(
             value=value,
             parent_expr=parent_expr,
