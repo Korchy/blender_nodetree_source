@@ -52,13 +52,13 @@ class Node:
                         else:
                             # for simple nodes - by identifier
                             source += ('    ' * deep) + \
-                                      'input = next((input for input in ' + node_alias + \
-                                      '.inputs if input.identifier==\'' + c_input.identifier + '\'), None)' + '\n'
-                            source += ('    ' * deep) + 'if input:' + '\n'
+                                      'input_ = next((input_ for input_ in ' + node_alias + \
+                                      '.inputs if input_.identifier==\'' + c_input.identifier + '\'), None)' + '\n'
+                            source += ('    ' * deep) + 'if input_:' + '\n'
                             source += BlTypesConversion.source_from_complex_type(
                                 value=c_input,
                                 excluded_attributes=excluded_attributes,
-                                parent_expr='input',
+                                parent_expr='input_',
                                 deep=deep+1
                             )
             # outputs
