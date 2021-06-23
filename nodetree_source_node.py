@@ -41,23 +41,51 @@ class Node:
                 for index, c_input in enumerate(node.inputs):
                     if hasattr(c_input, 'default_value'):
                         excluded_attributes = [attr for attr in ['type', 'link_limit'] if hasattr(c_input, attr)]
-                        source += BlTypesConversion.source_from_complex_type(
-                            value=c_input,
-                            excluded_attributes=excluded_attributes,
-                            parent_expr=node_alias + '.inputs[' + str(index) + ']',
-                            deep=deep
-                        )
+                        if node.type == 'GROUP':
+                            # for node groups - by index
+                            source += BlTypesConversion.source_from_complex_type(
+                                value=c_input,
+                                excluded_attributes=excluded_attributes,
+                                parent_expr=node_alias + '.inputs[' + str(index) + ']',
+                                deep=deep
+                            )
+                        else:
+                            # for simple nodes - by identifier
+                            source += ('    ' * deep) + \
+                                      'input = next((input for input in ' + node_alias + \
+                                      '.inputs if input.identifier==\'' + c_input.identifier + '\'), None)' + '\n'
+                            source += ('    ' * deep) + 'if input:' + '\n'
+                            source += BlTypesConversion.source_from_complex_type(
+                                value=c_input,
+                                excluded_attributes=excluded_attributes,
+                                parent_expr='input',
+                                deep=deep+1
+                            )
             # outputs
             if node.outputs:
                 for index, c_output in enumerate(node.outputs):
                     if hasattr(c_output, 'default_value'):
                         excluded_attributes = [attr for attr in ['type', 'link_limit'] if hasattr(c_output, attr)]
-                        source += BlTypesConversion.source_from_complex_type(
-                            value=c_output,
-                            excluded_attributes=excluded_attributes,
-                            parent_expr=node_alias + '.outputs[' + str(index) + ']',
-                            deep=deep
-                        )
+                        if node.type == 'GROUP':
+                            # for node groups - by index
+                            source += BlTypesConversion.source_from_complex_type(
+                                value=c_output,
+                                excluded_attributes=excluded_attributes,
+                                parent_expr=node_alias + '.outputs[' + str(index) + ']',
+                                deep=deep
+                            )
+                        else:
+                            # for simple nodes - by identifier
+                            source += ('    ' * deep) + \
+                                      'output = next((output for output in ' + node_alias + \
+                                      '.outputs if output.identifier==\'' + c_output.identifier + '\'), None)' + '\n'
+                            source += ('    ' * deep) + 'if output:' + '\n'
+                            source += BlTypesConversion.source_from_complex_type(
+                                value=c_output,
+                                excluded_attributes=excluded_attributes,
+                                parent_expr='output',
+                                deep=deep + 1
+                            )
         return source
 
     @staticmethod
