@@ -41,7 +41,7 @@ class Node:
                 for index, c_input in enumerate(node.inputs):
                     if hasattr(c_input, 'default_value'):
                         excluded_attributes = [attr for attr in ['type', 'link_limit'] if hasattr(c_input, attr)]
-                        if node.type == 'GROUP':
+                        if node.type in ('GROUP', 'GROUP_INPUT', 'GROUP_OUTPUT'):
                             # for node groups - by index
                             source += BlTypesConversion.source_from_complex_type(
                                 value=c_input,
@@ -66,7 +66,7 @@ class Node:
                 for index, c_output in enumerate(node.outputs):
                     if hasattr(c_output, 'default_value'):
                         excluded_attributes = [attr for attr in ['type', 'link_limit'] if hasattr(c_output, attr)]
-                        if node.type == 'GROUP':
+                        if node.type in ('GROUP', 'GROUP_INPUT', 'GROUP_OUTPUT'):
                             # for node groups - by index
                             source += BlTypesConversion.source_from_complex_type(
                                 value=c_output,

@@ -23,7 +23,7 @@ The "Material", "World", "Geometry Nodes", "Lights" and "Compositing" nodes are 
 
 Current add-on version
 -
-1.2.0.
+1.2..
 
 Blender versions
 -
@@ -40,6 +40,9 @@ Installation
 
 Version history
 -
+1.2.1.
+- Fixed issue with node groups input-output nodes
+
 1.2.0.
 - Added Geometry Nodes support
 - Minimum Blender compatibility increased to 2.93 for supporting Geometry Nodes
