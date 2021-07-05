@@ -5,6 +5,7 @@
 #   https://github.com/Korchy/blender_nodetree_source
 
 import os
+from .nodetree_source_bl_types_conversion import BlTypesConversion
 from .nodetree_source_file_manager import FileManager
 from .nodetree_source_node import Node
 
@@ -23,14 +24,27 @@ class NodeTree:
         if node_tree.inputs:
             source += ('    ' * deep) + '# INPUTS' + '\n'
             for c_input in node_tree.inputs:
-                source += ('    ' * deep) + parent_expr + str(deep) + \
+                source += ('    ' * deep) + 'input = ' + parent_expr + str(deep) + \
                           '.inputs.new(\'' + c_input.bl_socket_idname + '\', \'' + c_input.name + '\')' + '\n'
+                source += BlTypesConversion.source_from_complex_type(
+                    value=c_input,
+                    excluded_attributes=['NWViewerSocket'],
+                    parent_expr='input',
+                    deep=deep
+                )
         # outputs
         if node_tree.outputs:
             source += ('    ' * deep) + '# OUTPUTS' + '\n'
             for c_output in node_tree.outputs:
-                source += ('    ' * deep) + parent_expr + str(deep) + \
+                source += ('    ' * deep) + 'output = ' + parent_expr + str(deep) + \
                           '.outputs.new(\'' + c_output.bl_socket_idname + '\', \'' + c_output.name + '\')' + '\n'
+                source += BlTypesConversion.source_from_complex_type(
+                    value=c_output,
+                    excluded_attributes=['NWViewerSocket'],
+                    parent_expr='output',
+                    deep=deep
+                )
+
         # nodes
         if node_tree.nodes:
             source += '    ' * deep + '# NODES' + '\n'
