@@ -92,7 +92,9 @@ class Node:
     def node_alias(node, deep=0):
         # get text node alias-name
         node_name = node.name.lower()
-        for ch in (' ', '.', '/'):
+        for ch in (' ', '.', '/', '-'):
             node_name = node_name.replace(ch, '_')
         node_name += '_' + str(deep)
+        if node_name[0].isdigit():
+            node_name = '_' + node_name
         return node_name

@@ -136,6 +136,8 @@ class Material:
     def material_alias(material):
         # get text material alias-name
         material_name = material.name.lower()
-        for ch in (' ', '.', '/'):
+        for ch in (' ', '.', '/', '-'):
             material_name = material_name.replace(ch, '_')
+        if material_name[0].isdigit():
+            material_name = '_' + material_name
         return material_name

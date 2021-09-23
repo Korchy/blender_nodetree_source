@@ -23,7 +23,7 @@ The "Material", "World", "Geometry Nodes", "Lights" and "Compositing" nodes are 
 
 Current add-on version
 -
-1.2.2.
+1.2.3.
 
 Blender versions
 -
@@ -40,7 +40,10 @@ Installation
 
 Version history
 -
-1.2.2.
+1.2.3.
+- Fixed issue with materials from the Adobe Substance add-on
+
+- 1.2.2.
 - Fixed issue with node groups node trees input-output nodes
 - Fixed issue with Frame node
 
