@@ -4,6 +4,7 @@
 # GitHub
 #   https://github.com/Korchy/blender_nodetree_source
 
+import re
 from .nodetree_source_node_tree import NodeTree
 from .nodetree_source_context import NodeTreeSourceContext
 
@@ -18,13 +19,15 @@ class Material:
         subtype, subtype2 = NodeTreeSourceContext.context(context=context)
         if active_material_object:
             # create new material
-            material_name = cls.material_alias(material=active_material_object.node_group) \
-                if subtype == 'GeometryNodeTree' \
-                else cls.material_alias(material=active_material_object)
+            material = active_material_object.node_group if subtype == 'GeometryNodeTree' \
+                else active_material_object
+            material_name_original = material.name
+            material_name = cls.material_alias(material=material)   # validated name as variable
             src_new, deep = cls._create_new_source(
                 subtype=subtype,
                 subtype2=subtype2,
-                material_name=material_name
+                material_name=material_name,
+                material_name_original=material_name_original
             )
             source += src_new + '\n'
             # material node tree
@@ -45,13 +48,14 @@ class Material:
         return source
 
     @staticmethod
-    def _create_new_source(subtype, subtype2, material_name):
+    def _create_new_source(subtype, subtype2, material_name, material_name_original):
         # create new material by type - source
         source = ''
         deep = 0
         # header
         if subtype == 'ShaderNodeTree' and subtype2 == 'OBJECT':
-            source = material_name + ' = bpy.data.materials.new(name=\'' + material_name + '\')' + '\n'
+            source = material_name + ' = bpy.data.materials.new(name=\'' + \
+                     material_name_original.replace('\'', '\\\'') + '\')' + '\n'
             source += material_name + '.use_nodes = True' + '\n'
             source += 'node_tree0 = ' + material_name + '.node_tree' + '\n'
         elif subtype == 'ShaderNodeTree' and subtype2 == 'LIGHT':
@@ -136,8 +140,8 @@ class Material:
     def material_alias(material):
         # get text material alias-name
         material_name = material.name.lower()
-        for ch in (' ', '.', '/', '-'):
-            material_name = material_name.replace(ch, '_')
+        material_name = ''.join((x if x.isalnum() else '_' for x in material_name))
+        material_name = re.sub('_+', '_', material_name)
         if material_name[0].isdigit():
             material_name = '_' + material_name
         return material_name

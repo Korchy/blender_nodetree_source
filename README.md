@@ -23,11 +23,11 @@ The "Material", "World", "Geometry Nodes", "Lights" and "Compositing" nodes are 
 
 Current add-on version
 -
-1.2.3.
+1.2.4.
 
 Blender versions
 -
-2.93, 3.0
+2.93, 3.0, 3.1
 
 Location and call
 -
@@ -40,6 +40,9 @@ Installation
 
 Version history
 -
+1.2.4.
+- Fixed issue with some symbols in materials names
+
 1.2.3.
 - Fixed issue with materials from the Adobe Substance add-on
 

@@ -4,6 +4,7 @@
 # GitHub
 #   https://github.com/Korchy/blender_nodetree_source
 
+import re
 from .nodetree_source_bl_types_conversion import BlTypesConversion
 
 
@@ -92,8 +93,8 @@ class Node:
     def node_alias(node, deep=0):
         # get text node alias-name
         node_name = node.name.lower()
-        for ch in (' ', '.', '/', '-'):
-            node_name = node_name.replace(ch, '_')
+        node_name = ''.join((x if x.isalnum() else '_' for x in node_name))
+        node_name = re.sub('_+', '_', node_name)
         node_name += '_' + str(deep)
         if node_name[0].isdigit():
             node_name = '_' + node_name
