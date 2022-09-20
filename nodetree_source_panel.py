@@ -10,7 +10,7 @@ from bpy.utils import register_class, unregister_class
 
 class NODETREE_SOURCE_PT_panel_3d_view(Panel):
     bl_idname = 'NODETREE_SOURCE_PT_panel_3d_view'
-    bl_label = 'NodeTree Source Bilder'
+    bl_label = 'NodeTree Source Builder'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'NodeTree Source'

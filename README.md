@@ -23,11 +23,11 @@ The "Material", "World", "Geometry Nodes", "Lights" and "Compositing" nodes are 
 
 Current add-on version
 -
-1.2.4.
+1.2.5.
 
 Blender versions
 -
-2.93, 3.0, 3.1
+2.93, 3.0, 3.1, 3.2, 3.3, 3.4
 
 Location and call
 -
@@ -40,6 +40,9 @@ Installation
 
 Version history
 -
+1.2.5.
+- Fixed issue with the text.from_string() block in Blender 3.2 and higher
+
 1.2.4.
 - Fixed issue with some symbols in materials names
 

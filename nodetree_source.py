@@ -22,19 +22,30 @@ class NodeTreeSource:
         if dest_path and os.path.exists(dest_path):
             with tempfile.TemporaryDirectory() as temp_dir:
                 folder_to_zip = FileManager.abs_path(os.path.join(temp_dir, NodeTreeSourceLibrary.idname))
-                folder_to_zip_content = FileManager.abs_path(os.path.join(temp_dir, NodeTreeSourceLibrary.idname, NodeTreeSourceLibrary.idname))
+                folder_to_zip_content = FileManager.abs_path(
+                    os.path.join(temp_dir, NodeTreeSourceLibrary.idname, NodeTreeSourceLibrary.idname)
+                )
                 os.makedirs(folder_to_zip)
                 # copy library source to zip folder
-                copytree(NodeTreeSourceLibrary.library_path(), os.path.join(folder_to_zip_content, NodeTreeSourceLibrary.idname))
+                copytree(
+                    NodeTreeSourceLibrary.library_path(),
+                    os.path.join(folder_to_zip_content, NodeTreeSourceLibrary.idname)
+                )
                 # copy .py files
                 py_files = [
                     'nodetree_source_library.py', 'nodetree_source_library_items.py', 'nodetree_source_library_ops.py',
                     'nodetree_source_library_panel.py', 'nodetree_source_context.py'
                 ]
                 for py_file in py_files:
-                    copyfile(os.path.join(os.path.dirname(FileManager.abs_path(__file__)), py_file), os.path.join(folder_to_zip_content, py_file))
+                    copyfile(
+                        os.path.join(os.path.dirname(FileManager.abs_path(__file__)), py_file),
+                        os.path.join(folder_to_zip_content, py_file)
+                    )
                 # init file with renaming
-                copyfile(os.path.join(os.path.dirname(FileManager.abs_path(__file__)), 'nodetree_source_library_template_init.py'), os.path.join(folder_to_zip_content, '__init__.py'))
+                copyfile(
+                    os.path.join(os.path.dirname(FileManager.abs_path(__file__)), 'nodetree_source_library_template_init.py'),
+                    os.path.join(folder_to_zip_content, '__init__.py')
+                )
                 # make add-on archive
                 arch = make_archive(os.path.join(dest_path, NodeTreeSourceLibrary.idname), 'zip', folder_to_zip)
                 bpy.ops.nodetree_source.messagebox('INVOKE_DEFAULT', message='Add-on created in:\n' + arch)
@@ -92,7 +103,10 @@ class NodeTreeSource:
         text_block = scene_data.texts.get(material.name)
         if not text_block:
             text_block = scene_data.texts.new(name=material.name)
-        text_block.from_string(string=source)
+        if bpy.app.version < (3, 2, 0):
+            text_block.from_string(string=source)
+        else:
+            text_block.from_string(text=source)
         text_block.select_set(line_start=0, char_start=0, line_end=0, char_end=0)
         text_block.current_line_index = 0
         # show text object in window
