@@ -43,7 +43,10 @@ class NodeTreeSource:
                     )
                 # init file with renaming
                 copyfile(
-                    os.path.join(os.path.dirname(FileManager.abs_path(__file__)), 'nodetree_source_library_template_init.py'),
+                    os.path.join(
+                        os.path.dirname(FileManager.abs_path(__file__)),
+                        'nodetree_source_library_template_init.py'
+                    ),
                     os.path.join(folder_to_zip_content, '__init__.py')
                 )
                 # make add-on archive
