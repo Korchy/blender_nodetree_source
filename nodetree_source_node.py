@@ -10,6 +10,9 @@ from .nodetree_source_bl_types_conversion import BlTypesConversion
 
 class Node:
 
+    dynamic_io_node_types = ['GROUP', 'GROUP_INPUT', 'GROUP_OUTPUT', 'REPEAT_INPUT',
+                             'REPEAT_OUTPUT', 'SIMULATION_INPUT', 'SIMULATION_OUTPUT']
+
     @classmethod
     def to_source(cls, node, parent_expr='', deep=0):
         # get node source
@@ -19,13 +22,14 @@ class Node:
         # attributes
         # don't process
         excluded_attributes = [
-            'dimensions', 'height', 'inputs', 'internal_links', 'node_tree', 'outputs', 'rna_type', 'select',
-            'shading_compatibility', 'show_options', 'show_preview', 'show_texture', 'type', 'width_hidden'
+            'active_item', 'dimensions', 'height', 'inputs', 'internal_links',
+            'node_tree', 'outputs', 'rna_type', 'select', 'shading_compatibility',
+            'show_options', 'show_preview', 'show_texture', 'type', 'width_hidden'
         ]
         # process first - because they influence on other attributes
         preordered_attributes = [attr for attr in ['mode', 'node_tree', 'parent'] if hasattr(node, attr)]
         # this attributes - complex
-        complex_attributes = ['color_ramp', 'mapping']
+        complex_attributes = ['color_ramp', 'mapping', 'paired_output', 'repeat_items', 'state_items']
         # get source
         source += BlTypesConversion.source_from_complex_type(
             value=node,
@@ -42,8 +46,8 @@ class Node:
                 for index, c_input in enumerate(node.inputs):
                     if hasattr(c_input, 'default_value'):
                         excluded_attributes = [attr for attr in ['type', 'link_limit'] if hasattr(c_input, attr)]
-                        if node.type in ('GROUP', 'GROUP_INPUT', 'GROUP_OUTPUT'):
-                            # for node groups - by index
+                        if node.type in cls.dynamic_io_node_types:
+                            # for node groups and zone's nodes - by index
                             source += BlTypesConversion.source_from_complex_type(
                                 value=c_input,
                                 excluded_attributes=excluded_attributes,
@@ -67,8 +71,8 @@ class Node:
                 for index, c_output in enumerate(node.outputs):
                     if hasattr(c_output, 'default_value'):
                         excluded_attributes = [attr for attr in ['type', 'link_limit'] if hasattr(c_output, attr)]
-                        if node.type in ('GROUP', 'GROUP_INPUT', 'GROUP_OUTPUT'):
-                            # for node groups - by index
+                        if node.type in cls.dynamic_io_node_types:
+                            # for node groups and zone's nodes - by index
                             source += BlTypesConversion.source_from_complex_type(
                                 value=c_output,
                                 excluded_attributes=excluded_attributes,

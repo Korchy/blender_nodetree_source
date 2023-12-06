@@ -4,6 +4,7 @@
 # GitHub
 #   https://github.com/Korchy/blender_nodetree_source
 
+import bpy
 import os
 from .nodetree_source_bl_types_conversion import BlTypesConversion
 from .nodetree_source_file_manager import FileManager
@@ -21,35 +22,78 @@ class NodeTree:
         # list to control node groups - not to build the same node group more than once
         processed_node_groups = [] if processed_node_groups is None else processed_node_groups
         # inputs
-        if node_tree.inputs:
-            source += ('    ' * deep) + '# INPUTS' + '\n'
-            for c_input in node_tree.inputs:
-                source += ('    ' * deep) + 'input = ' + parent_expr + str(deep) + \
-                          '.inputs.new(\'' + c_input.bl_socket_idname + '\', \'' + c_input.name + '\')' + '\n'
-                source += BlTypesConversion.source_from_complex_type(
-                    value=c_input,
-                    excluded_attributes=['NWViewerSocket'],
-                    parent_expr='input',
-                    deep=deep
-                )
+        if bpy.app.version < (4, 0, 0):
+            if node_tree.inputs:
+                source += ('    ' * deep) + '# INPUTS' + '\n'
+                for c_input in node_tree.inputs:
+                    source += ('    ' * deep) + 'input = ' + parent_expr + str(deep) + \
+                              '.inputs.new(\'' + c_input.bl_socket_idname + '\', \'' + c_input.name + '\')' + '\n'
+                    source += BlTypesConversion.source_from_complex_type(
+                        value=c_input,
+                        excluded_attributes=['NWViewerSocket'],
+                        parent_expr='input',
+                        deep=deep
+                    )
+        else:
+            inputs = [socket for socket in node_tree.interface.items_tree if socket.in_out == 'INPUT']
+            if inputs:
+                source += ('    ' * deep) + '# INPUTS' + '\n'
+                for c_input in inputs:
+                    source += ('    ' * deep) + 'input = ' + parent_expr + str(deep) \
+                              + '.interface.new_socket(name=\'' + c_input.name + '\', '\
+                              + 'socket_type=\'' + c_input.bl_socket_idname + '\', ' \
+                              + 'in_out=\'INPUT\'' \
+                              + ')' + '\n'
+                    source += BlTypesConversion.source_from_complex_type(
+                        value=c_input,
+                        excluded_attributes=['NWViewerSocket'],
+                        parent_expr='input',
+                        deep=deep
+                    )
         # outputs
-        if node_tree.outputs:
-            source += ('    ' * deep) + '# OUTPUTS' + '\n'
-            for c_output in node_tree.outputs:
-                source += ('    ' * deep) + 'output = ' + parent_expr + str(deep) + \
-                          '.outputs.new(\'' + c_output.bl_socket_idname + '\', \'' + c_output.name + '\')' + '\n'
-                source += BlTypesConversion.source_from_complex_type(
-                    value=c_output,
-                    excluded_attributes=['NWViewerSocket'],
-                    parent_expr='output',
-                    deep=deep
-                )
-
+        if bpy.app.version < (4, 0, 0):
+            if node_tree.outputs:
+                source += ('    ' * deep) + '# OUTPUTS' + '\n'
+                for c_output in node_tree.outputs:
+                    source += ('    ' * deep) + 'output = ' + parent_expr + str(deep) + \
+                              '.outputs.new(\'' + c_output.bl_socket_idname + '\', \'' + c_output.name + '\')' + '\n'
+                    source += BlTypesConversion.source_from_complex_type(
+                        value=c_output,
+                        excluded_attributes=['NWViewerSocket'],
+                        parent_expr='output',
+                        deep=deep
+                    )
+        else:
+            outputs = [socket for socket in node_tree.interface.items_tree if socket.in_out == 'OUTPUT']
+            if outputs:
+                source += ('    ' * deep) + '# OUTPUTS' + '\n'
+                for c_output in outputs:
+                    source += ('    ' * deep) + 'output = ' + parent_expr + str(deep) \
+                              + '.interface.new_socket(name=\'' + c_output.name + '\', '\
+                              + 'socket_type=\'' + c_output.bl_socket_idname + '\', ' \
+                              + 'in_out=\'OUTPUT\'' \
+                              + ')' + '\n'
+                    source += BlTypesConversion.source_from_complex_type(
+                        value=c_output,
+                        excluded_attributes=['NWViewerSocket'],
+                        parent_expr='output',
+                        deep=deep
+                    )
         # nodes
         if node_tree.nodes:
             source += '    ' * deep + '# NODES' + '\n'
             # process first - because they influence on other nodes and must be created first
-            preordered_nodes = [node for node in node_tree.nodes if node.type in ['FRAME']]
+            #   'FRAME' - when creating node, if it is in frame, frame must be already exists
+            #   'REPEAT_OUTPUT' - from "Repeat Zone" block, needs to be first because
+            #       1. when creating items - automatically creates inputs/outputs on both repeat zone nodes
+            #       2. when Repeat Input node creates it needs to call pair_with_output()
+            #           function with previously created Repeat Output node in parameter
+            #   'SIMULATION_OUTPUT' - from "Simulation Zone" block, needs to be first because
+            #       1. when creating items - automatically creates inputs/outputs on both simulation zone nodes
+            #       2. when Simulation Input node creates it needs to call pair_with_output()
+            #           function with previously created Repeat Output node in parameter
+            preordered_nodes = [node for node in node_tree.nodes
+                                if node.type in ['FRAME', 'REPEAT_OUTPUT', 'SIMULATION_OUTPUT']]
             # all other nodes
             nodes = [node for node in node_tree.nodes if node not in preordered_nodes]
             # first - preordered nodes, next - all other nodes
@@ -78,7 +122,11 @@ class NodeTree:
                     ) + '\n'
                 else:
                     # simple node
-                    source += Node.to_source(node=node, parent_expr='node_tree' + str(deep), deep=deep) + '\n'
+                    source += Node.to_source(
+                        node=node,
+                        parent_expr='node_tree' + str(deep),
+                        deep=deep
+                    ) + '\n'
         # links
         if node_tree.links:
             source += ('    ' * deep) + '# LINKS' + '\n'

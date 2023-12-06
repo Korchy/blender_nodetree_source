@@ -23,11 +23,11 @@ The "Material", "World", "Geometry Nodes", "Lights" and "Compositing" nodes are 
 
 Current add-on version
 -
-1.2.5.
+1.3.0.
 
 Blender versions
 -
-2.93, 3.0, 3.1, 3.2, 3.3, 3.4
+2.93, 3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 4.0
 
 Location and call
 -
@@ -40,6 +40,10 @@ Installation
 
 Version history
 -
+1.3.0.
+- Updated for compatibility with Blender 4.0
+- Added "Repeat Zone" and "Simulation Zone" geometry nodes processing
+
 1.2.5.
 - Fixed issue with the text.from_string() block in Blender 3.2 and higher
 

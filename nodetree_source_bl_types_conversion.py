@@ -39,7 +39,8 @@ class BlTypesConversion:
             return None
 
     @staticmethod
-    def source_from_complex_type(value, excluded_attributes: list = None, preordered_attributes: list = None,
+    def source_from_complex_type(value, excluded_attributes: list = None,
+                                 preordered_attributes: list = None,
                                  complex_attributes: list = None, parent_expr='', deep=0):
         # excluded attributes - don't process them (ex: type, select)
         excluded_attributes = excluded_attributes if excluded_attributes is not None else []
@@ -99,7 +100,7 @@ class BLVector(TupleType):
     pass
 
 
-class BLMatrix():
+class BLMatrix:
 
     @classmethod
     def to_source(cls, value, parent_expr='', deep=0):
@@ -384,3 +385,33 @@ class BLColorRampElement:
             deep=deep
         )
         return source
+
+
+class BLGeometryNodeRepeatOutput:
+
+    @classmethod
+    def to_source(cls, value, parent_expr='', deep=0):
+        node_str = '.'.join(parent_expr.split('.')[:-1])
+        from .nodetree_source_node import Node
+        return ('    ' * deep) + \
+            node_str + '.pair_with_output(' + Node.node_alias(node=value, deep=deep-1) + ')'
+
+
+class BLRepeatItem:
+
+    @classmethod
+    def to_source(cls, value, parent_expr='', deep=0):
+        current_element = re.search('\[([\d]+)\]', parent_expr).group(1)
+        elements = re.search('(.+)\[', parent_expr).group(1)
+        # return 'element=' + current_element + ' elements=' + elements
+        source = ('    ' * deep) + 'if ' + current_element + ' >= len(' + elements + '):' + '\n'
+        source += ('    ' * (deep + 1)) + elements + '.new(socket_type=\'' + value.socket_type + '\', name=\'' + value.name + '\')' + '\n'
+        return source
+
+
+class BLGeometryNodeSimulationOutput(BLGeometryNodeRepeatOutput):
+    pass
+
+
+class BLSimulationStateItem(BLRepeatItem):
+    pass
