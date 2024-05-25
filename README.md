@@ -23,11 +23,11 @@ The "Material", "World", "Geometry Nodes", "Lights" and "Compositing" nodes are 
 
 Current add-on version
 -
-1.3.0.
+1.3.1.
 
 Blender versions
 -
-2.93, 3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 4.0
+2.93, 3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 4.0, 4.1
 
 Location and call
 -
@@ -40,6 +40,9 @@ Installation
 
 Version history
 -
+1.3.1.
+- Fixed undefined min/max values in node groups input/output sockets
+
 1.3.0.
 - Updated for compatibility with Blender 4.0
 - Added "Repeat Zone" and "Simulation Zone" geometry nodes processing

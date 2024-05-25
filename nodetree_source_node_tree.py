@@ -21,6 +21,10 @@ class NodeTree:
         source += cls.clear_source(parent_expr=parent_expr, deep=deep)
         # list to control node groups - not to build the same node group more than once
         processed_node_groups = [] if processed_node_groups is None else processed_node_groups
+        # don't process
+        excluded_attributes = ['NWViewerSocket']
+        # process first - because they influence on other attributes
+        preordered_attributes = ['socket_type']
         # inputs
         if bpy.app.version < (4, 0, 0):
             if node_tree.inputs:
@@ -30,7 +34,7 @@ class NodeTree:
                               '.inputs.new(\'' + c_input.bl_socket_idname + '\', \'' + c_input.name + '\')' + '\n'
                     source += BlTypesConversion.source_from_complex_type(
                         value=c_input,
-                        excluded_attributes=['NWViewerSocket'],
+                        excluded_attributes=[attr for attr in excluded_attributes if hasattr(c_input, attr)],
                         parent_expr='input',
                         deep=deep
                     )
@@ -46,7 +50,8 @@ class NodeTree:
                               + ')' + '\n'
                     source += BlTypesConversion.source_from_complex_type(
                         value=c_input,
-                        excluded_attributes=['NWViewerSocket'],
+                        excluded_attributes=[attr for attr in excluded_attributes if hasattr(c_input, attr)],
+                        preordered_attributes=[attr for attr in preordered_attributes if hasattr(c_input, attr)],
                         parent_expr='input',
                         deep=deep
                     )
@@ -59,7 +64,7 @@ class NodeTree:
                               '.outputs.new(\'' + c_output.bl_socket_idname + '\', \'' + c_output.name + '\')' + '\n'
                     source += BlTypesConversion.source_from_complex_type(
                         value=c_output,
-                        excluded_attributes=['NWViewerSocket'],
+                        excluded_attributes=[attr for attr in excluded_attributes if hasattr(c_output, attr)],
                         parent_expr='output',
                         deep=deep
                     )
@@ -75,7 +80,8 @@ class NodeTree:
                               + ')' + '\n'
                     source += BlTypesConversion.source_from_complex_type(
                         value=c_output,
-                        excluded_attributes=['NWViewerSocket'],
+                        excluded_attributes=[attr for attr in excluded_attributes if hasattr(c_output, attr)],
+                        preordered_attributes=[attr for attr in preordered_attributes if hasattr(c_output, attr)],
                         parent_expr='output',
                         deep=deep
                     )

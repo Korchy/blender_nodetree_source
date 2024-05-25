@@ -66,7 +66,10 @@ class NodeTreeSource:
         source_file_name = source_file_alias + '.py'
         source_file_path = os.path.join(library_path, source_file_name)
         if os.path.exists(source_file_path):
-            bpy.ops.nodetree_source.messagebox('INVOKE_DEFAULT', message='Material with the same name already exists in the library!')
+            bpy.ops.nodetree_source.messagebox(
+                'INVOKE_DEFAULT',
+                message='Material with the same name already exists in the library!'
+            )
         else:
             # get material source
             # header
